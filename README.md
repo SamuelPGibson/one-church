@@ -96,6 +96,7 @@ EventAttendees
 - user
 - user Id
 
+
 <!-- 🚨 SPECS AND STUFF🚨  -->
 ## WHAT I WAS ABLE TO GET FROM CHATGPT 🚨 
 
