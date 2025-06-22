@@ -2,30 +2,32 @@
 Functions for handling API requests
 '''
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
+
+from typing import Any
 import json
-from database import Database, PostgreSQLDatabase
+
+from database import Database, DummyDatabase, PostgreSQLDatabase
 
 db: Database = PostgreSQLDatabase()
+# db: Database = DummyDatabase()  # Use DummyDatabase for testing
 
 @csrf_exempt
-def get_test(request):
+def get_test(request: HttpRequest) -> JsonResponse:
     if request.method == "GET":
-        resp = db.get_test()
-        return JsonResponse({"message": resp})
+        return JsonResponse(db.get_test())
 
 @csrf_exempt
-def get_post(request, post_id):
+def get_post(request: HttpRequest, post_id: int) -> JsonResponse:
     if request.method == "GET":
-        db.get_test()
-        post = db.get_post(post_id)
+        post: dict[str, Any] | None = db.get_post(post_id)
         if post:
             return JsonResponse(post)
         return JsonResponse({"error": "Post not found"}, status=404)
 
 @csrf_exempt
-def create_post(request):
+def create_post(request: HttpRequest) -> JsonResponse:
     if request.method == "POST":
         data = json.loads(request.body)
         post = db.create_post(

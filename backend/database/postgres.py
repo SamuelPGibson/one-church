@@ -15,7 +15,7 @@ class PostgreSQLDatabase(Database):
         ''' Initialize the PostgreSQL database connection '''
 
     def get_test(self) -> str:
-        return "Connected to PostgreSQL Database"
+        return {"message": "Connected to PostgreSQL Database"}
 
     def authenticate_user(self, username: str, password: str) -> bool:
         return authenticate(username=username, password=password)
