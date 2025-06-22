@@ -4,7 +4,11 @@
 * PostgreSQL database that uses Django Models and ORM
 * Strict separation between the API interface and the database - for database flexibility
 
-## PostgreSQL Setup
+To run with dummy database, change `db` definition in `backend/api/views.py`
+
+## PostgreSQL Setup (not needed for DummyDatabase configuration)
+
+Download [PostgreSQL](https://www.postgresql.org/download/)
 
 * Database name: `one_church_db`
 * Password is `onechurch`
@@ -52,6 +56,12 @@ Scripts\activate
 cd {project backend folder}
 ```
 
+Install backend library requirements
+
+```cmd
+pip install -r requirements.txt
+```
+
 Apply migrations
 
 ```cmd
@@ -82,3 +92,5 @@ June 22, 2025 - 20:45:23
 Django version 4.2, using settings 'church_connect.settings'
 Starting development server at http://127.0.0.1:8000/
 ```
+
+Test API endpoint at http://127.0.0.1:8000/api/test
