@@ -16,6 +16,9 @@ class Database(ABC):
     def get_test(self) -> dict:
         ''' Returns a test string for the database '''
 
+    def get_int_test(self, num: int) -> dict:
+        ''' test for passing arguments in API calls '''
+
     # Login and Logout
     @abstractmethod
     def authenticate_user(self, username: str, password: str) -> dict:
@@ -834,7 +837,7 @@ class Database(ABC):
     def search(self, query: str) -> dict:
         '''
         Purpose:
-            Search for users and organizations based on a query string.
+            Search for users and parent organizations based on a query string.
         Pre-conditions:
             :param query: The search query string
         Post-conditions:
@@ -851,7 +854,7 @@ class Database(ABC):
     def search_organizations(self, query: str) -> dict:
         '''
         Purpose:
-            Search for organizations based on a query string.
+            Search for parent organizations based on a query string.
         Pre-conditions:
             :param query: The search query string
         Post-conditions:
