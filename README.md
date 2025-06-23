@@ -137,8 +137,7 @@ EventAttendees
 ## Posts & Comments
 
 | Method | Endpoint                            | Description                          |
-|--------|-------------------------------------|--------------------------------------|
-| GET    | `/api/posts/`                       | List all posts                       |
+|--------|-------------------------------------|--------------------------------------| GET    | `/api/posts/`                       | List all posts                       |git
 | POST   | `/api/posts/`                       | Create new post                      |
 | GET    | `/api/posts/<id>/`                  | View a single post                   |
 | PUT    | `/api/posts/<id>/`                  | Edit post                            |
@@ -1334,7 +1333,6 @@ function Chat() {
 }
 
 ```
-
 ---
 
 ## 6. Basic Event Posting (Backend Model + API)
