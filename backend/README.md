@@ -48,11 +48,21 @@ Connect to database
 
 Create and activate virtual environment
 
+Windows
 ```cmd
 cd {virtual environments folder}
 python -m venv one_church
 cd one_church
 Scripts\activate
+cd {project backend folder}
+```
+
+Mac
+```cmd
+cd {virtual environments folder}
+python3 -m venv one_church
+cd one_church
+source bin\activate
 cd {project backend folder}
 ```
 
