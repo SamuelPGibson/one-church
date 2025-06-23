@@ -10,13 +10,17 @@ import json
 
 from database import Database, DummyDatabase, PostgreSQLDatabase
 
-db: Database = PostgreSQLDatabase()
-# db: Database = DummyDatabase()  # Use DummyDatabase for testing
+# db: Database = PostgreSQLDatabase()
+db: Database = DummyDatabase()  # Use DummyDatabase for testing
 
 @csrf_exempt
 def get_test(request: HttpRequest) -> JsonResponse:
     if request.method == "GET":
         return JsonResponse(db.get_test())
+    
+def get_int_test(request: HttpRequest, int_value: int) -> JsonResponse:
+    if request.method == "GET":
+        return JsonResponse(db.get_int_test(int_value))
 
 @csrf_exempt
 def get_post(request: HttpRequest, post_id: int) -> JsonResponse:

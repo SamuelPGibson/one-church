@@ -1,6 +1,8 @@
 # OneChurch
 
-A social media platform for the Body of Christ to connect with each other across the globe. 
+A social media platform for the Body of Christ to connect with each other across the globe.
+
+[Meeting Notes](https://docs.google.com/document/d/1pUJHi-8vokDYMihsFsQ2jKnH5iamM0fS9fAo9KlK48w/edit?tab=t.0)
 
 Features
 - ability to create an account for your Church/organization or personal
