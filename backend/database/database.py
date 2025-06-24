@@ -12,6 +12,10 @@ class Database(ABC):
         All methods return a dictionary with keys 'success' and 'message'
         and possibly additional fields with relevant data.
     '''
+    def __init__(self):
+        ''' Initialize and/or connect to the database '''
+
+    # Tests
     @abstractmethod
     def get_test(self) -> dict:
         ''' Returns a test string for the database '''
@@ -428,6 +432,115 @@ class Database(ABC):
                             'success' is True if retrieval is successful, otherwise False.
                             'message' contains additional information about the result.
                             'data' contains the list of followed users or organizations if successful.
+        '''
+
+    # User/Organization Affiliation
+    @abstractmethod
+    def add_organization_admin(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Add a user as an admin of an organization.
+            Idempotent if the user is already an admin.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be added as an admin
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def remove_organization_admin(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Remove a user from being an admin of an organization.
+            Idempotent if the user is not an admin.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be removed as an admin
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def add_organization_member(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Add a user as a member of an organization.
+            Idempotent if the user is already a member.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be added as a member
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def remove_organization_member(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Remove a user from being a member of an organization.
+            Idempotent if the user is not a member.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be removed as a member
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+    
+    @abstractmethod
+    def add_organization_congregant(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Add a user as a congregant of an organization.
+            Idempotent if the user is already a congregant.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be added as a congregant
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def remove_organization_congregant(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Remove a user from being a congregant of an organization.
+            Idempotent if the user is not a congregant.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be removed as a congregant
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
         '''
 
     # Follow/Unfollow
