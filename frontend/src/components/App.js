@@ -5,10 +5,20 @@ function App() {
 
     const [users, setUsers] = useState([])
 
+    // useEffect(() => {
+    //     fetch('http://localhost:3000/users')
+    //         .then(res => res.json())
+    //         .then((data) =>
+    //             setUsers(data));
+    // }, [])
+
     useEffect(() => {
-        fetch('http://localhost:3001/users')
+        fetch("http://localhost:3001/users")
             .then(res => res.json())
-            .then((data) => setUsers(data));
+            .then(data => {
+                setUsers(data)
+                console.log(data)
+            })
     }, [])
 
 }
