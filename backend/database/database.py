@@ -12,6 +12,10 @@ class Database(ABC):
         All methods return a dictionary with keys 'success' and 'message'
         and possibly additional fields with relevant data.
     '''
+    def __init__(self):
+        ''' Initialize and/or connect to the database '''
+
+    # Tests
     @abstractmethod
     def get_test(self) -> dict:
         ''' Returns a test string for the database '''
@@ -107,13 +111,13 @@ class Database(ABC):
         '''
 
     @abstractmethod
-    def update_user(self, user_id: int, user_info: dict) -> dict:
+    def update_user(self, user_id: int, username: str) -> dict:
         '''
         Purpose:
             Update user information for a given user ID.
         Pre-conditions:
             :param user_id: The ID of the user to update
-            :param user_info: A dictionary containing the new user information
+            :param username: The new username for the user
         Post-conditions:
             (none)
         Returns:
@@ -278,14 +282,14 @@ class Database(ABC):
         '''
 
     @abstractmethod
-    def update_organization(self, org_id: int, org_info: dict) -> dict:
+    def update_organization(self, org_id: int, name: str) -> dict:
         '''
         Purpose:
             Update organization information for a given organization ID.
             Checks to make sure parent organization has not been changed.
         Pre-conditions:
             :param org_id: The ID of the organization to update
-            :param org_info: A dictionary containing the new organization information
+            :param name: The new name for the organization
         Post-conditions:
             (none)
         Returns:
@@ -430,6 +434,115 @@ class Database(ABC):
                             'data' contains the list of followed users or organizations if successful.
         '''
 
+    # User/Organization Affiliation
+    @abstractmethod
+    def add_organization_admin(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Add a user as an admin of an organization.
+            Idempotent if the user is already an admin.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be added as an admin
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def remove_organization_admin(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Remove a user from being an admin of an organization.
+            Idempotent if the user is not an admin.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be removed as an admin
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def add_organization_member(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Add a user as a member of an organization.
+            Idempotent if the user is already a member.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be added as a member
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def remove_organization_member(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Remove a user from being a member of an organization.
+            Idempotent if the user is not a member.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be removed as a member
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+    
+    @abstractmethod
+    def add_organization_congregant(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Add a user as a congregant of an organization.
+            Idempotent if the user is already a congregant.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be added as a congregant
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def remove_organization_congregant(self, org_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Remove a user from being a congregant of an organization.
+            Idempotent if the user is not a congregant.
+        Pre-conditions:
+            :param org_id: The ID of the organization
+            :param user_id: The ID of the user to be removed as a congregant
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the operation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
     # Follow/Unfollow
     @abstractmethod
     def follow(self, follower_id: int, followee_id: int) -> dict:
@@ -505,13 +618,17 @@ class Database(ABC):
         '''
 
     @abstractmethod
-    def update_post(self, post_id: int, post_info: dict) -> dict:
+    def update_post(self, post_id: int, author_id: int, caption: str,
+                    image_url: str, location: str | None = None) -> dict:
         '''
         Purpose:
             Update a post by its ID.
         Pre-conditions:
             :param post_id: The ID of the post to be updated
-            :param post_info: A dictionary containing the new post information
+            :param author_id: The ID of the user or organization updating the post
+            :param caption: The new caption for the post
+            :param image_url: The new URL of the image to be included in the post
+            :param location: The new location associated with the post (optional)
         Post-conditions:
             (none)
         Returns:
@@ -579,13 +696,19 @@ class Database(ABC):
         '''
         
     @abstractmethod
-    def update_event(self, event_id: int, event_info: dict) -> dict:
+    def update_event(self, event_id: int, author_id: int, title: str, description: str,
+                     start_time: str, end_time: str, location: str) -> dict:
         '''
         Purpose:
             Update an event by its ID.
         Pre-conditions:
             :param event_id: The ID of the event to be updated
-            :param event_info: A dictionary containing the new event information
+            :param author_id: The ID of the user or organization updating the event
+            :param title: The new title of the event
+            :param description: The new description of the event
+            :param start_time: The new start time of the event in ISO format
+            :param end_time: The new end time of the event in ISO format
+            :param location: The new location of the event
         Post-conditions:
             (none)
         Returns:
@@ -724,13 +847,13 @@ class Database(ABC):
         '''
 
     @abstractmethod
-    def update_comment(self, comment_id: int, comment_info: dict) -> dict:
+    def update_comment(self, comment_id: int, content: str) -> dict:
         '''
         Purpose:
             Update a comment by its ID.
         Pre-conditions:
             :param comment_id: The ID of the comment to be updated
-            :param comment_info: A dictionary containing the new comment information
+            :param content: The new content for the comment
         Post-conditions:
             (none)
         Returns:
