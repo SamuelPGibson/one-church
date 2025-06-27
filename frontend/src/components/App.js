@@ -7,6 +7,8 @@ import Home from "./Home";
 import Footer from "./Footer";
 import Login from "./Login";
 import Signup from "./Signup";
+import Events from "./Events";
+
 
 function App() {
     const [users, setUsers] = useState([])
@@ -31,6 +33,7 @@ function App() {
                         <Route path="/home" element={<Home />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Signup />} />
+                        <Route path="/events" element={<Events />} />
                     </Routes>
                 </Router>
             </main>
