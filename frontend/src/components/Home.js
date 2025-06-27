@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Search from "./Search";
 
-
-
 function Home() {
     const [currentUser, setCurrentUser] = useState(null);
     const [allUsers, setAllUsers] = useState([]);

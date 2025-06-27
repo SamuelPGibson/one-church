@@ -8,39 +8,40 @@ import Footer from "./Footer";
 import Login from "./Login";
 import Signup from "./Signup";
 import Events from "./Events";
-
+import Profile from "./Profile";
 
 function App() {
-    const [users, setUsers] = useState([])
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         fetch("http://localhost:3001/users")
             .then(res => res.json())
             .then(data => {
-                setUsers(data)
-                console.log(data)
-            })
-    }, [])
+                setUsers(data);
+                console.log(data);
+            });
+    }, []);
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <Header />
+        <Router>
+            <div className="flex flex-col min-h-screen">
+                <Header />
 
-            <main className="flex-grow">
-                <Router>
+                <div className="flex-grow">
                     <Routes>
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/home" element={<Home />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/events" element={<Events />} />
+                        <Route path="/profile" element={<Profile />} />
                     </Routes>
-                </Router>
-            </main>
+                </div>
 
-            <Footer />
-        </div>
-    )
+                <Footer />
+            </div>
+        </Router>
+    );
 }
 
 export default App;
