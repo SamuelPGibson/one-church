@@ -1,19 +1,7 @@
-// import React from "react";
-
-// function Home() {
-//     return (
-//         <main className="container mx-auto px-6 py-12 max-w-3xl">
-//             <h1 className="text-4xl font-bold mb-8 text-indigo-700">About OneChurch</h1>
-//             <p className="text-lg text-gray-800 leading-relaxed">
-//                 A social networking platform for the Body of Christ to connect with each other across the globe.
-//             </p>
-//         </main>
-//     );
-// }
-
-// export default Home;
-
 import React, { useEffect, useState } from "react";
+import Search from "./Search";
+
+
 
 function Home() {
     const [currentUser, setCurrentUser] = useState(null);
@@ -52,6 +40,9 @@ function Home() {
             <p className="text-lg text-gray-800 leading-relaxed mb-10">
                 A social networking platform for the Body of Christ to connect with each other across the globe.
             </p>
+
+            <Search users={allUsers} />
+
 
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">Your Feed</h2>
 
