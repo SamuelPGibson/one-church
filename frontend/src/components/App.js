@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
-import './index.css';
-
+// import { Route, Routes } from "react-router-dom";
+import '../index.css';
+import Header from "./Header";
+import Footer from "./Footer";
 
 function App() {
 
@@ -16,5 +17,14 @@ function App() {
             })
     }, [])
 
+    return (
+        <div>
+
+            <Header />
+
+            <Footer />
+
+        </div>
+    )
 }
 export default App;
