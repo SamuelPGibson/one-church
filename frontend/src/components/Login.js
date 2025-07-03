@@ -17,13 +17,28 @@ export default function Login() {
         e.preventDefault();
         console.log("Logging in with:", formData);
 
-        // Replace this with your real login check:
-        if (formData.username === "bernard26" && formData.password === "password123") {
-            // Login successful — redirect to home page
-            navigate("/home");
-        } else {
-            alert("Invalid username or password");
-        }
+        // attempting to add in the http request
+        fetch("/login/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify({
+                username: formData.username,
+                password: formData.password
+            })
+        })
+           .then(res => res.json())
+           .then(data => console.log(data))
+           .catch(err => console.error("Error fetching events:", err));
+
+        // // Replace this with your real login check:
+        // if (formData.username === "bernard26" && formData.password === "password123") {
+        //     // Login successful — redirect to home page
+        //     navigate("/home");
+        // } else {
+        //     alert("Invalid username or password");
+        // }
     }
 
     return (
