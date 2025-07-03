@@ -139,7 +139,7 @@ Returns of API calls to fetch data (GET requests) include the fetched data:
 Checks the validity of the username and password, and returns the user's ID if valid.
 
 ```http
-POST /api/login
+POST /api/login/
 {
     "username": "(string)",
     "password": "(string)"
@@ -170,7 +170,7 @@ Failure return:
 Logs out the user with the given user ID.
 
 ```http
-POST /api/logout
+POST /api/logout/
 {
     "user_id": (int)
 }
@@ -201,7 +201,7 @@ Failure return:
 Creates a new user account.
 
 ```http
-POST /api/users
+POST /api/users/
 {
     "username": "(string)",
     "password": "(string)"
@@ -234,7 +234,7 @@ Failure return:
 Deletes a user account by user ID.
 
 ```http
-DELETE /api/users/(user_id)
+DELETE /api/users/(user_id)/
 ```
 
 Success return:
@@ -262,7 +262,7 @@ Failure return:
 Changes the password for a user.
 
 ```http
-POST /api/users/(user_id)/change_password
+POST /api/users/(user_id)/change_password/
 {
     "new_password": "(string)"
 }
@@ -293,7 +293,7 @@ Failure return:
 Updates the username for a user.
 
 ```http
-POST /api/users/(user_id)/update
+POST /api/users/(user_id)/update/
 {
     "username": "(string)"
 }
@@ -324,7 +324,7 @@ Failure return:
 Fetches user data by user ID.
 
 ```http
-GET /api/users/(user_id)
+GET /api/users/(user_id)/
 ```
 
 Success return:
@@ -353,9 +353,9 @@ Failure return:
 Fetches organizations where the user is an admin, member, or congregant.
 
 ```http
-GET /api/users/(user_id)/organizations_admin
-GET /api/users/(user_id)/organizations_member
-GET /api/users/(user_id)/organizations_congregant
+GET /api/users/(user_id)/organizations_admin/
+GET /api/users/(user_id)/organizations_member/
+GET /api/users/(user_id)/organizations_congregant/
 ```
 
 Success return:
@@ -384,7 +384,7 @@ Failure return:
 Fetches all posts authored by the user.
 
 ```http
-GET /api/users/(user_id)/posts
+GET /api/users/(user_id)/posts/
 ```
 
 Success return:
@@ -413,8 +413,8 @@ Failure return:
 Fetches followers or following users for a user.
 
 ```http
-GET /api/users/(user_id)/followers
-GET /api/users/(user_id)/following
+GET /api/users/(user_id)/followers/
+GET /api/users/(user_id)/following/
 ```
 
 Success return:
@@ -443,7 +443,7 @@ Failure return:
 Creates a new organization.
 
 ```http
-POST /api/organizations
+POST /api/organizations/
 {
     "name": "(string)",
     "parent_id": (int)
@@ -476,7 +476,7 @@ Failure return:
 Deletes an organization by ID.
 
 ```http
-DELETE /api/organizations/(org_id)
+DELETE /api/organizations/(org_id)/
 ```
 
 Success return:
@@ -504,7 +504,7 @@ Failure return:
 Updates the name of an organization.
 
 ```http
-POST /api/organizations/(org_id)/update
+POST /api/organizations/(org_id)/update/
 {
     "name": "(string)"
 }
@@ -535,7 +535,7 @@ Failure return:
 Fetches organization data by ID.
 
 ```http
-GET /api/organizations/(org_id)
+GET /api/organizations/(org_id)/
 ```
 
 Success return:
@@ -564,7 +564,7 @@ Failure return:
 Fetches child organizations of a given organization.
 
 ```http
-GET /api/organizations/(org_id)/children
+GET /api/organizations/(org_id)/children/
 ```
 
 Success return:
@@ -593,7 +593,7 @@ Failure return:
 Fetches all posts for an organization.
 
 ```http
-GET /api/organizations/(org_id)/posts
+GET /api/organizations/(org_id)/posts/
 ```
 
 Success return:
@@ -622,9 +622,9 @@ Failure return:
 Fetches users who are admins, members, or congregants of an organization.
 
 ```http
-GET /api/organizations/(org_id)/admins
-GET /api/organizations/(org_id)/members
-GET /api/organizations/(org_id)/congregants
+GET /api/organizations/(org_id)/admins/
+GET /api/organizations/(org_id)/members/
+GET /api/organizations/(org_id)/congregants/
 ```
 
 Success return:
@@ -653,8 +653,8 @@ Failure return:
 Fetches followers or following organizations for an organization.
 
 ```http
-GET /api/organizations/(org_id)/followers
-GET /api/organizations/(org_id)/following
+GET /api/organizations/(org_id)/followers/
+GET /api/organizations/(org_id)/following/
 ```
 
 Success return:
@@ -683,12 +683,12 @@ Failure return:
 Adds or removes a user as admin, member, or congregant of an organization.
 
 ```http
-POST /api/organizations/(org_id)/add_admin/(user_id)
-POST /api/organizations/(org_id)/remove_admin/(user_id)
-POST /api/organizations/(org_id)/add_member/(user_id)
-POST /api/organizations/(org_id)/remove_member/(user_id)
-POST /api/organizations/(org_id)/add_congregant/(user_id)
-POST /api/organizations/(org_id)/remove_congregant/(user_id)
+POST /api/organizations/(org_id)/add_admin/(user_id)/
+POST /api/organizations/(org_id)/remove_admin/(user_id)/
+POST /api/organizations/(org_id)/add_member/(user_id)/
+POST /api/organizations/(org_id)/remove_member/(user_id)/
+POST /api/organizations/(org_id)/add_congregant/(user_id)/
+POST /api/organizations/(org_id)/remove_congregant/(user_id)/
 ```
 
 Success return:
@@ -716,12 +716,12 @@ Failure return:
 Follows or unfollows a user or organization.
 
 ```http
-POST /api/follow
+POST /api/follow/
 {
     "follower_id": (int),
     "followee_id": (int)
 }
-POST /api/unfollow
+POST /api/unfollow/
 {
     "follower_id": (int),
     "followee_id": (int)
@@ -753,7 +753,7 @@ Failure return:
 Creates a new post.
 
 ```http
-POST /api/posts
+POST /api/posts/
 {
     "author_id": (int),
     "caption": "(string)",
@@ -788,7 +788,7 @@ Failure return:
 Deletes a post by ID.
 
 ```http
-DELETE /api/posts/(post_id)
+DELETE /api/posts/(post_id)/
 ```
 
 Success return:
@@ -816,7 +816,7 @@ Failure return:
 Updates a post.
 
 ```http
-POST /api/posts/(post_id)/update
+POST /api/posts/(post_id)/update/
 {
     "author_id": (int),
     "caption": "(string)",
@@ -850,7 +850,7 @@ Failure return:
 Fetches a post by ID.
 
 ```http
-GET /api/posts/(post_id)
+GET /api/posts/(post_id)/
 ```
 
 Success return:
@@ -879,7 +879,7 @@ Failure return:
 Creates a new event.
 
 ```http
-POST /api/events
+POST /api/events/
 {
     "author_id": (int),
     "title": "(string)",
@@ -916,7 +916,7 @@ Failure return:
 Deletes an event by ID.
 
 ```http
-DELETE /api/events/(event_id)
+DELETE /api/events/(event_id)/
 ```
 
 Success return:
@@ -944,7 +944,7 @@ Failure return:
 Updates an event.
 
 ```http
-POST /api/events/(event_id)/update
+POST /api/events/(event_id)/update/
 {
     "author_id": (int),
     "title": "(string)",
@@ -980,7 +980,7 @@ Failure return:
 Fetches an event by ID.
 
 ```http
-GET /api/events/(event_id)
+GET /api/events/(event_id)/
 ```
 
 Success return:
@@ -1009,10 +1009,10 @@ Failure return:
 Marks a user as going or interested in an event.
 
 ```http
-POST /api/events/(event_id)/going/(user_id)
-POST /api/events/(event_id)/remove_going/(user_id)
-POST /api/events/(event_id)/interested/(user_id)
-POST /api/events/(event_id)/remove_interested/(user_id)
+POST /api/events/(event_id)/going/(user_id)/
+POST /api/events/(event_id)/remove_going/(user_id)/
+POST /api/events/(event_id)/interested/(user_id)/
+POST /api/events/(event_id)/remove_interested/(user_id)/
 ```
 
 Success return:
@@ -1040,7 +1040,7 @@ Failure return:
 Creates a comment on a post or event.
 
 ```http
-POST /api/comments
+POST /api/comments/
 {
     "post_id": (int),
     "author_id": (int),
@@ -1074,7 +1074,7 @@ Failure return:
 Deletes a comment by ID.
 
 ```http
-DELETE /api/comments/(comment_id)
+DELETE /api/comments/(comment_id)/
 ```
 
 Success return:
@@ -1102,7 +1102,7 @@ Failure return:
 Updates a comment.
 
 ```http
-POST /api/comments/(comment_id)/update
+POST /api/comments/(comment_id)/update/
 {
     "content": "(string)"
 }
@@ -1133,7 +1133,7 @@ Failure return:
 Fetches a comment by ID.
 
 ```http
-GET /api/comments/(comment_id)
+GET /api/comments/(comment_id)/
 ```
 
 Success return:
@@ -1162,10 +1162,10 @@ Failure return:
 Likes or dislikes a post.
 
 ```http
-POST /api/posts/(post_id)/like/(user_id)
-POST /api/posts/(post_id)/remove_like/(user_id)
-POST /api/posts/(post_id)/dislike/(user_id)
-POST /api/posts/(post_id)/remove_dislike/(user_id)
+POST /api/posts/(post_id)/like/(user_id)/
+POST /api/posts/(post_id)/remove_like/(user_id)/
+POST /api/posts/(post_id)/dislike/(user_id)/
+POST /api/posts/(post_id)/remove_dislike/(user_id)/
 ```
 
 Success return:
@@ -1193,9 +1193,9 @@ Failure return:
 Performs a search for users, organizations, or events.
 
 ```http
-GET /api/search?query=(string)
-GET /api/search/organizations?query=(string)
-GET /api/search/events?query=(string)
+GET /api/search?query=(string)/
+GET /api/search/organizations?query=(string)/
+GET /api/search/events?query=(string)/
 ```
 
 Success return:
