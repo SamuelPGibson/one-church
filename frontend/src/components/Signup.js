@@ -25,17 +25,32 @@ function Signup() {
 
         console.log("Registering:", userWithId);
 
-        // Example POST to JSON server or backend
-        fetch("http://localhost:3001/users", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(userWithId),
+        // attempting to add in the http request
+        fetch("http://127.0.0.1:8000/api/users", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify({
+                username: formData.username,
+                password: formData.password
+            })
         })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log("Registered user:", data);
-                // redirect to login or homepage
-            });
+           .then(res => res.json())
+           .then(data => console.log(data))
+           .catch(err => console.error("Error fetching events:", err));
+
+        // Example POST to JSON server or backend
+        // fetch("http://localhost:3001/users", {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify(userWithId),
+        // })
+        //     .then((res) => res.json())
+        //     .then((data) => {
+        //         console.log("Registered user:", data);
+        //         // redirect to login or homepage
+        //     });
     }
 
     return (
