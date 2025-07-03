@@ -2,6 +2,7 @@
 
 ## Rules
 
+* All API calls on the frontend must end with a trailing slash (/) - to avoid issues with Django's URL routing.
 * () means that whatever is within the braces can be replaced depending on data/ip/domain name.
 * All API calls use HTTP methods (GET, PUT, DELETE, POST) - API calls are marked with the method.
 

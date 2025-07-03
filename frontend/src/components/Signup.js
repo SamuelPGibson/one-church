@@ -26,7 +26,7 @@ function Signup() {
         console.log("Registering:", userWithId);
 
         // attempting to add in the http request
-        fetch("http://127.0.0.1:8000/api/users", {
+        fetch("http://127.0.0.1:8000/api/users/", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
