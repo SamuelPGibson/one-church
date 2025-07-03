@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api'
+    'api',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -48,7 +49,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
+
+# Only these origins are allowed to make API calls
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React frontend server
+]
+
+CORS_ALLOW_ALL_ORIGINS = False # Set to True to allow all origins - DEV ONLY!
+CORS_ALLOW_CREDENTIALS = True # for cookies and authentication
+
 
 ROOT_URLCONF = 'backend.urls'
 
