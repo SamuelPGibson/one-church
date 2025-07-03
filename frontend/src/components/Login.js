@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api/auth";
 
 export default function Login() {
     const [formData, setFormData] = useState({
@@ -9,37 +10,23 @@ export default function Login() {
 
     const navigate = useNavigate();
 
-    function handleChange(e) {
+    const handleChange = async(e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
-    function handleSubmit(e) {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Logging in with:", formData);
-
-        // attempting to add in the http request
-        fetch("/login/", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body: JSON.stringify({
-                username: formData.username,
-                password: formData.password
-            })
-        })
-           .then(res => res.json())
-           .then(data => console.log(data))
-           .catch(err => console.error("Error fetching events:", err));
-
-        // // Replace this with your real login check:
-        // if (formData.username === "bernard26" && formData.password === "password123") {
-        //     // Login successful — redirect to home page
-        //     navigate("/home");
-        // } else {
-        //     alert("Invalid username or password");
-        // }
-    }
+        const result = await loginUser({
+        username: formData.username,
+        password: formData.password
+        });
+    
+        if (result.error) {
+        alert(result.error);
+        } else {
+        console.log("User Logged in!");
+        }
+    };
 
     return (
         <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

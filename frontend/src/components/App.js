@@ -11,16 +11,16 @@ import Events from "./Events";
 import Profile from "./Profile";
 
 function App() {
-    const [users, setUsers] = useState([]);
+    // const [users, setUsers] = useState([]);
 
-    useEffect(() => {
-        fetch("http://localhost:3001/users")
-            .then(res => res.json())
-            .then(data => {
-                setUsers(data);
-                console.log(data);
-            });
-    }, []);
+    // useEffect(() => {
+    //     fetch("/api/users/")
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             setUsers(data);
+    //             console.log(data);
+    //         });
+    // }, []);
 
     return (
         <Router>

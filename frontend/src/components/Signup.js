@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createUser } from "../api/auth";
 
 function Signup() {
     const [formData, setFormData] = useState({
@@ -9,49 +10,30 @@ function Signup() {
         profilePicture: "",
     });
 
-    function handleChange(e) {
+    const handleChange = async (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
     }
 
-    function handleSubmit(e) {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const userWithId = {
-            id: Date.now(), // or you can let the backend handle it
-            ...formData,
-        };
+        console.log("does it get here");
+        const result = await createUser({
+        username: formData.username,
+        password: formData.password
+        });
+    
+        if (result.error) {
+        alert(result.error);
+        } else {
+        console.log("Created User!");
+        }
+    };
+      
 
-        console.log("Registering:", userWithId);
-
-        // attempting to add in the http request
-        fetch("/users/", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body: JSON.stringify({
-                username: formData.username,
-                password: formData.password
-            })
-        })
-           .then(res => res.json())
-           .then(data => console.log(data))
-           .catch(err => console.error("Error fetching events:", err));
-
-        // Example POST to JSON server or backend
-        // fetch("http://localhost:3001/users", {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify(userWithId),
-        // })
-        //     .then((res) => res.json())
-        //     .then((data) => {
-        //         console.log("Registered user:", data);
-        //         // redirect to login or homepage
-        //     });
-    }
+    
 
     return (
         <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -130,5 +112,4 @@ function Signup() {
         </main>
     );
 }
-
 export default Signup;
