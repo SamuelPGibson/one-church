@@ -4,13 +4,16 @@
 
 | Layer | Purpose | Code Location |
 |---|---|---|
-| Presentation     | User interface and interaction                | `frontend/src/`|
-| Frontend API Interface| API calls on frontend| `frontend/src/api/api.js` |
+| Presentation | User interface and interaction | `frontend/src/`|
+| Frontend API Interface | API calls on frontend| `frontend/src/api/api.js` |
+| API Routing | Routes API calls to appropriate handlers | `backend/api/urls.js` |
 | API Endpoints | Handles requests and responses | `backend/api/views.py` |
 | Database Interface | Interface used by backend to access database | `backend/database/database.py`|
 | Database | Structured data storage| `backend/database/postgres.py`|
 
-## Our System Design Principles
+Any change to an API call involves editing all of the above layers.
+
+## System Design Principles
 
 * **Strict Separation of Concerns**: Each layer has a distinct role - changes in one layer do not affect others
   * A layer does not need to know anything about the implementation of other layers - only the interface with the layer above it
