@@ -753,6 +753,15 @@ class DummyDatabase(Database):
             "success": True,
             "message": "User not disliked the post"
         }
+    
+    # Post/Event Feed
+    def get_user_feed(self, user_id: int, offset: int = 0, limit: int = 10) -> dict:
+        feed = self.posts + self.events
+        return {
+            "success": True,
+            "message": "User feed retrieved successfully",
+            "data": feed[offset:offset + limit]
+        }
 
     # Search
     def search(self, query: str) -> dict:

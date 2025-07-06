@@ -766,6 +766,19 @@ export async function removeDislike(postId, userId) {
   }
 }
 
+// Post/Event Feed
+
+export async function getUserFeed(userId, offset = 0, limit = 10) {
+  try {
+    const res = await fetch(`/api/users/${userId}/feed/?offset=${offset}&limit=${limit}`);
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to get user feed" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
 // Search
 
 export async function search(query) {
