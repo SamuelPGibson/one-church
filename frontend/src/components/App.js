@@ -9,18 +9,10 @@ import Login from "./Login";
 import Signup from "./Signup";
 import Events from "./Events";
 import Profile from "./Profile";
-
+import MakePost from "./posts/MakePost"
+import Post from "./posts/Post"
 function App() {
-    const [users, setUsers] = useState([]);
 
-    useEffect(() => {
-        fetch("http://localhost:3001/users")
-            .then(res => res.json())
-            .then(data => {
-                setUsers(data);
-                console.log(data);
-            });
-    }, []);
 
     return (
         <Router>
@@ -35,11 +27,19 @@ function App() {
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/events" element={<Events />} />
                         <Route path="/profile" element={<Profile />} />
+                        <Route path="/makepost" element={<MakePost />} />
                     </Routes>
                 </div>
 
                 <Footer />
             </div>
+
+            <Routes>
+                
+                <Route path="/displaypost" element={<Post postId={1}/>} />
+            </Routes>
+
+            
         </Router>
     );
 }

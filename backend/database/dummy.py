@@ -27,6 +27,33 @@ class DummyDatabase(Database):
         self.going_events: list[dict] = []
         self.interested_events: list[dict] = []
 
+        self.__create_dummy_data()
+
+    def __create_dummy_data(self):
+        ''' Create some dummy data for testing '''
+        self.users = [
+            {"id": 1, "username": "user1", "password": "pass1"},
+            {"id": 2, "username": "user2", "password": "pass2"}
+        ]
+        self.organizations = [
+            {"id": 1, "name": "Org1", "parent_id": 0},
+            {"id": 2, "name": "Org2", "parent_id": 0}
+        ]
+        self.posts = [
+            {"id": 1, "author_id": 1, "caption": "Post by user1", "image_url": "", "location": None},
+            {"id": 2, "author_id": 2, "caption": "Post by user2", "image_url": "", "location": None}
+        ]
+        self.events = [
+            {"id": 1, "author_id": 1, "title": "Event by user1", "description": "Description of event", 
+             "start_time": "2023-10-01T10:00:00Z", "end_time": "2023-10-01T12:00:00Z", "location": "Location1"},
+            {"id": 2, "author_id": 2, "title": "Event by user2", "description": "Description of event", 
+             "start_time": "2023-10-02T10:00:00Z", "end_time": "2023-10-02T12:00:00Z", "location": "Location2"}
+        ]
+        self.comments = [
+            {"id": 1, "post_id": 1, "author_id": 2, "content": "Comment on post by user1"},
+            {"id": 2, "post_id": 2, "author_id": 1, "content": "Comment on post by user2"}
+        ]
+
     # Tests
     def get_test(self) -> dict:
         return {"message": "Connected to Dummy Database"}
@@ -37,6 +64,7 @@ class DummyDatabase(Database):
     
     # Login and Logout
     def authenticate_user(self, username: str, password: str) -> dict:
+        print(f"Authenticating user: {username} with password: {password}")
         for user in self.users:
             if user['username'] == username and user['password'] == password:
                 return {
@@ -57,6 +85,7 @@ class DummyDatabase(Database):
 
     # User Account
     def create_user(self, username: str, password: str) -> dict:
+        print(f"Creating user: {username} with password: {password}")
         for user in self.users:
             if user["username"] == username:
                 return {
@@ -723,6 +752,15 @@ class DummyDatabase(Database):
         return {
             "success": True,
             "message": "User not disliked the post"
+        }
+    
+    # Post/Event Feed
+    def get_user_feed(self, user_id: int, offset: int = 0, limit: int = 10) -> dict:
+        feed = self.posts + self.events
+        return {
+            "success": True,
+            "message": "User feed retrieved successfully",
+            "data": feed[offset:offset + limit]
         }
 
     # Search

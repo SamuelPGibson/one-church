@@ -446,6 +446,15 @@ def remove_dislike(request: HttpRequest, post_id: int, user_id: int) -> JsonResp
         return JsonResponse(result, status=get_status_code(result))
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
+# Post/Event Feed
+def get_user_feed(request: HttpRequest, user_id: int) -> JsonResponse:
+    if request.method == "GET":
+        offset = int(request.GET.get("offset", 0))
+        limit = int(request.GET.get("limit", 10))
+        result = db.get_user_feed(user_id, offset, limit)
+        return JsonResponse(result, status=get_status_code(result))
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
 # Search
 def search(request: HttpRequest) -> JsonResponse:
     if request.method == "GET":

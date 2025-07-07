@@ -1,18 +1,37 @@
 import React, { useEffect, useState } from "react";
+import { getUserFeed } from "../api/api";
 
 export default function Events() {
     const [events, setEvents] = useState([]);
 
+    const fetchEvents = async () => {
+        try {
+            const response = await getUserFeed(1); // Assuming user ID is 1 for demo purposes
+            if (response.success) {
+                setEvents(response.data);
+            } else {
+                console.error("Failed to fetch events:", response.message);
+            }
+        } catch (error) {
+            console.error("Error fetching events:", error);
+        }
+    };
+
     useEffect(() => {
-        fetch("http://localhost:3001/events")
-            .then(res => res.json())
-            .then(data => setEvents(data))
-            .catch(err => console.error("Error fetching events:", err));
+        fetchEvents();
     }, []);
 
     return (
         <main className="max-w-3xl mx-auto p-6">
             <h1 className="text-3xl font-bold text-indigo-700 mb-6">Upcoming Events</h1>
+
+            {/* temp button to refresh events */}
+            <button
+                className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+                onClick={fetchEvents}
+            >
+                Refresh Events
+            </button>
 
             {events.length === 0 ? (
                 <p className="text-gray-500">No events available.</p>

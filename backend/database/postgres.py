@@ -211,6 +211,10 @@ class PostgreSQLDatabase(Database):
     def remove_dislike(self, post_id: int, user_id: int) -> dict:
         pass
 
+    # Post/Event Feed
+    def get_user_feed(self, user_id: int, offset: int = 0, limit: int = 10) -> dict:
+        pass
+
     # Search
     def search(self, query: str) -> dict:
         pass

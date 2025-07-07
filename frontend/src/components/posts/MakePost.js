@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { createUser } from "../api/api";
+import { createPost } from "../../api/api";
 
-function Signup() {
+function MakePost() {
     const [formData, setFormData] = useState({
-        username: "",
-        password: "",
-        name: "",
-        bio: "",
-        profilePicture: "",
+        userId: "",
+        caption: "",
+        image_url: "",
+        location: "",
     });
 
     const handleChange = async (e) => {
@@ -19,16 +18,17 @@ function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("does it get here");
-        const result = await createUser({
-        username: formData.username,
-        password: formData.password
+
+        const result = await createPost({
+        userId: formData.userId,
+        caption: formData.caption,
+        image_url: formData.image_url
         });
     
         if (result.error) {
         alert(result.error);
         } else {
-        console.log("Created User!");
+        console.log("Created Post!");
         }
     };
       
@@ -41,75 +41,64 @@ function Signup() {
                 onSubmit={handleSubmit}
                 className="bg-white shadow-md rounded-xl p-8 w-full max-w-lg space-y-6"
             >
-                <h2 className="text-3xl font-bold text-center text-indigo-700">Create an Account</h2>
+                <h2 className="text-3xl font-bold text-center text-indigo-700">Create a Post</h2>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Username</label>
+                    <label className="block text-sm font-medium text-gray-700">UserId</label>
                     <input
                         type="text"
-                        name="username"
+                        name="userId"
                         required
-                        value={formData.username}
+                        value={formData.userId}
                         onChange={handleChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md px-4 py-2"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Password</label>
+                    <label className="block text-sm font-medium text-gray-700">Caption</label>
                     <input
-                        type="password"
-                        name="password"
+                        type="text"
+                        name="caption"
                         required
-                        value={formData.password}
+                        value={formData.caption}
                         onChange={handleChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md px-4 py-2"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                    <label className="block text-sm font-medium text-gray-700">Image_url</label>
                     <input
                         type="text"
-                        name="name"
+                        name="image_url"
                         required
-                        value={formData.name}
+                        value={formData.image_url}
                         onChange={handleChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md px-4 py-2"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Bio</label>
+                    <label className="block text-sm font-medium text-gray-700">Location</label>
                     <input
                         type="text"
-                        name="bio"
-                        value={formData.bio}
+                        name="location"
+                        value={formData.location}
                         onChange={handleChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md px-4 py-2"
                     />
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Profile Picture URL</label>
-                    <input
-                        type="text"
-                        name="profilePicture"
-                        placeholder="/images/yourphoto.jpg"
-                        value={formData.profilePicture}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md px-4 py-2"
-                    />
-                </div>
 
                 <button
                     type="submit"
                     className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-md hover:bg-indigo-700"
                 >
-                    Register
+                    Create Post!
                 </button>
             </form>
         </main>
     );
 }
-export default Signup;
+export default MakePost;

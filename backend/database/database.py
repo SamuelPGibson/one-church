@@ -955,6 +955,26 @@ class Database(ABC):
                             'message' contains additional information about the result.
         '''
 
+    # Post/Event Feed
+    @abstractmethod
+    def get_user_feed(self, user_id: int, offset: int = 0, limit: int = 10) -> dict:
+        '''
+        Purpose:
+            Retrieve the feed of posts and events for a user.
+        Pre-conditions:
+            :param user_id: The ID of the user whose feed is to be retrieved
+            :param offset: The offset for pagination (default is 0)
+            :param limit: The maximum number of items to retrieve (default is 10)
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the feed information
+                            with keys 'success' and 'data'.
+                            'success' is True if feed retrieval is successful, otherwise False.
+                            'message' contains additional information about the result.
+                            'data' contains the list of posts and events if successful.
+        '''
+
     # Search
     @abstractmethod
     def search(self, query: str) -> dict:
