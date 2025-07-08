@@ -14,7 +14,7 @@ function Search(){
     }
 
     return (
-        <div className="flex items-center gap-2 w-full max-w-2xl mx-auto">
+      <form onSubmit={handleSubmit} className="flex items-center gap-2 w-full max-w-2xl mx-auto">
         <input
           type="text"
           placeholder="Searching for Jesus..."
@@ -23,7 +23,7 @@ function Search(){
           className="w-full p-3 border rounded-md focus:outline-indigo-600"
         />
         <button
-          onClick={handleSubmit}
+          type="submit"
           className="px-4 py-2 bg-white-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
         >
             <img
@@ -31,7 +31,8 @@ function Search(){
             className="w-6 h-6 object-contain hover:opacity-75"
             />
         </button>
-      </div>
+      </form>
+        
     )
 };
 
