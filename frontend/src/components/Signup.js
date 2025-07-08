@@ -19,18 +19,11 @@ function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("does it get here");
         const result = await createUser({
         username: formData.username,
         password: formData.password
         });
-    
-        if (result.error) {
-        alert(result.error);
-        } else {
-        console.log("Created User!");
-        }
-    };
+    }
       
 
     
