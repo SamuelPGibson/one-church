@@ -7,12 +7,14 @@ import Home from "./Home";
 import Footer from "./Footer";
 import Login from "./Login";
 import Signup from "./Signup";
-import Events from "./Events";
-import Profile from "./Profile";
-import MakePost from "./posts/MakePost"
-import Post from "./posts/Post"
-function App() {
+import FeedPage from "./feed_page/FeedPage";
+import ExplorePage from "./explore_page/ExplorePage";
+import CreatePage from "./create_page/CreatePage";
+import MessagingPage from "./messaging_page/MessagingPage";
+import ProfilePage from "./profile_page/ProfilePage";
 
+function App() {
+    const [userId, setUserId] = useState(null);
 
     return (
         <Router>
@@ -25,21 +27,16 @@ function App() {
                         <Route path="/home" element={<Home />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Signup />} />
-                        <Route path="/events" element={<Events />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/makepost" element={<MakePost />} />
+                        <Route path="/feed" element={<FeedPage />} />
+                        <Route path="/explore" element={<ExplorePage />} />
+                        <Route path="/create" element={<CreatePage />} />
+                        <Route path="/messaging" element={<MessagingPage />} />
+                        <Route path="/profile" element={<ProfilePage />} />
                     </Routes>
                 </div>
 
                 <Footer />
-            </div>
-
-            <Routes>
-                
-                <Route path="/displaypost" element={<Post postId={1}/>} />
-            </Routes>
-
-            
+            </div>            
         </Router>
     );
 }

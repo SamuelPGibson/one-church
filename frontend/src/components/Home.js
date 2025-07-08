@@ -10,25 +10,25 @@ function Home() {
     // Simulate logged-in user (id: 1 for now)
     const currentUserId = 1;
 
-    useEffect(() => {
-        // Fetch all users and posts
-        Promise.all([
-            fetch("http://localhost:3001/users").then((res) => res.json()),
-            fetch("http://localhost:3001/posts").then((res) => res.json())
-        ]).then(([users, posts]) => {
-            setAllUsers(users);
-            setPosts(posts);
+    // useEffect(() => {
+    //     // Fetch all users and posts
+    //     Promise.all([
+    //         fetch("http://localhost:3001/users").then((res) => res.json()),
+    //         fetch("http://localhost:3001/posts").then((res) => res.json())
+    //     ]).then(([users, posts]) => {
+    //         setAllUsers(users);
+    //         setPosts(posts);
 
-            const user = users.find((u) => u.id === currentUserId);
-            setCurrentUser(user);
+    //         const user = users.find((u) => u.id === currentUserId);
+    //         setCurrentUser(user);
 
-            const feedPosts = posts.filter((post) =>
-                user.following.includes(post.userId)
-            );
+    //         const feedPosts = posts.filter((post) =>
+    //             user.following.includes(post.userId)
+    //         );
 
-            setFeed(feedPosts.reverse()); // newest first
-        });
-    }, []);
+    //         setFeed(feedPosts.reverse()); // newest first
+    //     });
+    // }, []);
 
     const getUserById = (id) => allUsers.find((u) => u.id === id);
 

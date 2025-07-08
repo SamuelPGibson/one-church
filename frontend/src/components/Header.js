@@ -22,8 +22,11 @@ function Header() {
                 {/* Navigation */}
                 <nav className="space-x-6">
                     <Link to="/home" className="hover:text-indigo-300 transition">Home</Link>
-                    <Link to="/posts" className="hover:text-indigo-300 transition">Posts</Link>
-                    <Link to="/events" className="hover:text-indigo-300 transition">Events</Link>
+                    <Link to="/feed" className="hover:text-indigo-300 transition">Feed</Link>
+                    <Link to="/explore" className="hover:text-indigo-300 transition">Explore</Link>
+                    <Link to="/create" className="hover:text-indigo-300 transition">Create</Link>
+                    <Link to="/messaging" className="hover:text-indigo-300 transition">Messaging</Link>
+                    <Link to="/profile" className="hover:text-indigo-300 transition">Profile</Link>
                     {currentUser && (
                         <Link to="/profile" className="hover:text-indigo-300 transition">Profile</Link>
                     )}
