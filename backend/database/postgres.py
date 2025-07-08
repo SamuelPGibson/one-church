@@ -216,7 +216,8 @@ class PostgreSQLDatabase(Database):
         pass
 
     # Search
-    def search(self, query: str) -> dict:
+    def search(self, query: str, include_posts: bool, include_events: bool,
+               include_organizations: bool, include_users: bool) -> dict:
         pass
 
     def search_organizations(self, query: str) -> dict:

@@ -764,7 +764,8 @@ class DummyDatabase(Database):
         }
 
     # Search
-    def search(self, query: str) -> dict:
+    def search(self, query: str, include_posts: bool, include_events: bool,
+               include_organizations: bool, include_users: bool) -> dict:
         results = {
             "users": [user for user in self.users if query.lower() in user.get("username", "").lower()],
             "organizations": [org for org in self.organizations if org.get('parent_id') == 0 and query.lower() in org.get("name", "").lower()]

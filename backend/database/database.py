@@ -977,12 +977,17 @@ class Database(ABC):
 
     # Search
     @abstractmethod
-    def search(self, query: str) -> dict:
+    def search(self, query: str, include_posts: bool, include_events: bool,
+               include_organizations: bool, include_users: bool) -> dict:
         '''
         Purpose:
             Search for users and parent organizations based on a query string.
         Pre-conditions:
             :param query: The search query string
+            :param include_posts: Whether to include posts in the search results
+            :param include_events: Whether to include events in the search results
+            :param include_organizations: Whether to include organizations in the search results
+            :param include_users: Whether to include users in the search results
         Post-conditions:
             (none)
         Returns:

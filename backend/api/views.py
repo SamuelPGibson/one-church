@@ -461,7 +461,17 @@ def search(request: HttpRequest) -> JsonResponse:
         query = request.GET.get("query")
         if not query:
             return JsonResponse({"error": "Missing query parameter"}, status=400)
-        result = db.search(query)
+        include_posts = request.GET.get("includePosts", "true").lower() == "true"
+        include_events = request.GET.get("includeEvents", "true").lower() == "true"
+        include_organizations = request.GET.get("includeOrganizations", "true").lower() == "true"
+        include_users = request.GET.get("includeUsers", "true").lower() == "true"
+        result = db.search(
+            query,
+            include_posts=include_posts,
+            include_events=include_events,
+            include_organizations=include_organizations,
+            include_users=include_users,
+        )
         return JsonResponse(result, status=get_status_code(result))
     return JsonResponse({"error": "Method not allowed"}, status=405)
 

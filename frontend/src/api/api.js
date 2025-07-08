@@ -781,9 +781,9 @@ export async function getUserFeed(userId, offset = 0, limit = 10) {
 
 // Search
 
-export async function search(query) {
+export async function search(query, includePosts = true, includeEvents = true, includeOrganizations = true, includeUsers = true) {
   try {
-    const res = await fetch(`/api/search/?query=${encodeURIComponent(query)}`);
+    const res = await fetch(`/api/search/?query=${encodeURIComponent(query)}&includePosts=${includePosts}&includeEvents=${includeEvents}&includeOrganizations=${includeOrganizations}&includeUsers=${includeUsers}`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to search" };
     return data;
