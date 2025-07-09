@@ -9,7 +9,8 @@ import Login from "./auth_page/Login";
 import Signup from "./auth_page/Signup";
 import FeedPage from "./feed_page/FeedPage";
 import ExplorePage from "./explore_page/ExplorePage";
-import CreatePage from "./create_page/CreatePage";
+import CreatePost from "./create_page/CreatePost";
+import CreateEvent from "./create_page/CreateEvent";
 import MessagingPage from "./messaging_page/MessagingPage";
 import ProfilePage from "./profile_page/ProfilePage";
 
@@ -29,7 +30,8 @@ function App() {
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/feed" element={<FeedPage />} />
                         <Route path="/explore" element={<ExplorePage />} />
-                        <Route path="/create" element={<CreatePage />} />
+                        <Route path="/create-post" element={<CreatePost />} />
+                        <Route path="/create-event" element={<CreateEvent />} />
                         <Route path="/messaging" element={<MessagingPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
                     </Routes>
