@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createUser } from "../../api/api";
 
-function Signup() {
+function Signup({ setUserId }) {
     const [formData, setFormData] = useState({
         username: "",
         password: "",

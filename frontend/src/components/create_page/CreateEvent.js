@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CreateEvent = () => (
+const CreateEvent = ({ userId }) => (
     <div className="max-w-xl mx-auto mt-10 p-8 bg-white rounded-xl shadow-lg">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">Create New Event</h1>
         <p className="text-base text-gray-600 mb-6">

@@ -1,6 +1,6 @@
 import React from 'react';
 
-function MessagingPage() {
+function MessagingPage({ userId }) {
     return (
         <div className="max-w-xl mx-auto mt-10 shadow-lg rounded-lg">
             <header className="bg-[#2d3e50] text-white p-5 text-center rounded-t-lg">

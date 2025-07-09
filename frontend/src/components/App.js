@@ -26,14 +26,14 @@ function App() {
                     <Routes>
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/home" element={<Home />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/signup" element={<Signup />} />
-                        <Route path="/feed" element={<FeedPage />} />
-                        <Route path="/explore" element={<ExplorePage />} />
-                        <Route path="/create-post" element={<CreatePost />} />
-                        <Route path="/create-event" element={<CreateEvent />} />
-                        <Route path="/messaging" element={<MessagingPage />} />
-                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/login" element={<Login setUserId={setUserId} />} />
+                        <Route path="/signup" element={<Signup setUserId={setUserId} />} />
+                        <Route path="/feed" element={<FeedPage userId={userId} />} />
+                        <Route path="/explore" element={<ExplorePage userId={userId} />} />
+                        <Route path="/create-post" element={<CreatePost userId={userId} />} />
+                        <Route path="/create-event" element={<CreateEvent userId={userId} />} />
+                        <Route path="/messaging" element={<MessagingPage userId={userId} />} />
+                        <Route path="/profile" element={<ProfilePage userId={userId} />} />
                     </Routes>
                 </div>
 

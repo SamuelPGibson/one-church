@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/api";
 
-export default function Login() {
+export default function Login({ setUserId }) {
     const [formData, setFormData] = useState({
         username: "",
         password: "",

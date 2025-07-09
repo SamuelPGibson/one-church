@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { getUserFeed } from "../../api/api";
 
 
-export default function ContentList() {
+export default function ContentList({ userId }) {
     const [events, setEvents] = useState([]);
 
     const fetchEvents = async () => {
         try {
-            const response = await getUserFeed(1); // Assuming user ID is 1 for demo purposes
+            const response = await getUserFeed(userId);
             if (response.success) {
                 setEvents(response.data);
             } else {
