@@ -6,3 +6,7 @@ __pycache__/
 # Personal notepad
 notes.md
 venv/
+
+backend/venv/
+one_church/lib/
+frontend/node_modules/
