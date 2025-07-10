@@ -5,3 +5,4 @@ __pycache__/
 
 # Personal notepad
 notes.md
+venv/
