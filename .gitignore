@@ -10,3 +10,8 @@ venv/
 backend/venv/
 one_church/lib/
 frontend/node_modules/
+
+one_church/venv/
+
+one_church/
+one_church/
