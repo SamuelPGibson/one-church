@@ -40,14 +40,14 @@ class DummyDatabase(Database):
             {"id": 2, "name": "Org2", "parent_id": 0}
         ]
         self.posts = [
-            {"id": 1, "author_id": 1, "caption": "Post by user1", "image_url": "", "location": None},
-            {"id": 2, "author_id": 2, "caption": "Post by user2", "image_url": "", "location": None}
+            {"id": 1, "author_id": 1, "caption": "Post by user1", "image_url": "", "location": None, "type": "post"},
+            {"id": 2, "author_id": 2, "caption": "Post by user2", "image_url": "", "location": None, "type": "post"},
         ]
         self.events = [
-            {"id": 1, "author_id": 1, "title": "Event by user1", "description": "Description of event", 
-             "start_time": "2023-10-01T10:00:00Z", "end_time": "2023-10-01T12:00:00Z", "location": "Location1"},
-            {"id": 2, "author_id": 2, "title": "Event by user2", "description": "Description of event", 
-             "start_time": "2023-10-02T10:00:00Z", "end_time": "2023-10-02T12:00:00Z", "location": "Location2"}
+            {"id": 3, "author_id": 1, "title": "Event by user1", "description": "Description of event", 
+             "start_time": "2023-10-01T10:00:00Z", "end_time": "2023-10-01T12:00:00Z", "location": "Location1", "type": "event"},
+            {"id": 4, "author_id": 2, "title": "Event by user2", "description": "Description of event", 
+             "start_time": "2023-10-02T10:00:00Z", "end_time": "2023-10-02T12:00:00Z", "location": "Location2", "type": "event"},
         ]
         self.comments = [
             {"id": 1, "post_id": 1, "author_id": 2, "content": "Comment on post by user1"},
@@ -441,7 +441,8 @@ class DummyDatabase(Database):
             "author_id": author_id,
             "caption": caption,
             "image_url": image_url,
-            "location": location
+            "location": location,
+            "type": "post"
         }
         self._post_id += 1
         self.posts.append(post)
@@ -504,7 +505,8 @@ class DummyDatabase(Database):
             "description": description,
             "start_time": start_time,
             "end_time": end_time,
-            "location": location
+            "location": location,
+            "type": "event"
         }
         self._post_id += 1
         self.events.append(event)

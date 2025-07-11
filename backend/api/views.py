@@ -30,8 +30,11 @@ def get_int_test(request: HttpRequest, int_value: int) -> JsonResponse:
 # Login and Logout
 def authenticate_user(request: HttpRequest) -> JsonResponse:
     if request.method == "POST":
+        print("Authenticating user: ", request.body)
         try:
-            data = json.loads(request.body)
+            # Request body is {"username":{"username":"user1","password":"pass1"}}
+            # TODO: fix input format to {"username":"user1","password":"pass1"}
+            data = json.loads(request.body)["username"]
             result = db.authenticate_user(data["username"], data["password"])
             return JsonResponse(result, status=get_status_code(result))
         except (KeyError, json.JSONDecodeError):

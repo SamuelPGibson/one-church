@@ -17,14 +17,15 @@ export default function Login({ setUserId }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const result = await loginUser({
-        username: formData.username,
-        password: formData.password
+            username: formData.username,
+            password: formData.password
         });
     
         if (result.error) {
-        alert(result.error);
+            alert(result.error);
         } else {
-        console.log("User Logged in!");
+            setUserId(result.id);
+            console.log("User Logged in: ", result.id);
         }
     };
 
