@@ -40,14 +40,24 @@ class DummyDatabase(Database):
             {"id": 2, "name": "Org2", "parent_id": 0}
         ]
         self.posts = [
-            {"id": 1, "author_id": 1, "caption": "Post by user1", "image_url": "", "location": None, "type": "post"},
-            {"id": 2, "author_id": 2, "caption": "Post by user2", "image_url": "", "location": None, "type": "post"},
+            {"id": 1, "author_id": 1,
+             "caption": "This is the caption of the first every post on OneChurch! All for the glory of God!",
+             "timestamp": "2023-10-01T10:00:00Z",
+             "image_url": "https://t3.ftcdn.net/jpg/02/76/44/92/360_F_276449235_z71XmvtwDHfqxNt6UCK5yl4mAplD3cds.jpg",
+             "location": "Saskatoon", "type": "post", "author_name": "Big Monkey"},
+            {"id": 2, "author_id": 2, "caption": "Post by user2", "timestamp": "2023-10-02T10:00:00Z",
+             "image_url": "https://t3.ftcdn.net/jpg/02/76/44/92/360_F_276449235_z71XmvtwDHfqxNt6UCK5yl4mAplD3cds.jpg",
+             "location": None, "type": "post"},
         ]
         self.events = [
             {"id": 3, "author_id": 1, "title": "Event by user1", "description": "Description of event", 
-             "start_time": "2023-10-01T10:00:00Z", "end_time": "2023-10-01T12:00:00Z", "location": "Location1", "type": "event"},
+             "start_time": "2023-10-01T10:00:00Z", "end_time": "2023-10-01T12:00:00Z",
+             "location": "Location1", "type": "event",
+             "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRy5pXMLHcrqN-HmGJ97Rr9bcoAf8_EqzZZOg&s"},
             {"id": 4, "author_id": 2, "title": "Event by user2", "description": "Description of event", 
-             "start_time": "2023-10-02T10:00:00Z", "end_time": "2023-10-02T12:00:00Z", "location": "Location2", "type": "event"},
+             "start_time": "2023-10-02T10:00:00Z", "end_time": "2023-10-02T12:00:00Z",
+             "location": "Location2", "type": "event",
+             "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRy5pXMLHcrqN-HmGJ97Rr9bcoAf8_EqzZZOg&s"},
         ]
         self.comments = [
             {"id": 1, "post_id": 1, "author_id": 2, "content": "Comment on post by user1"},
