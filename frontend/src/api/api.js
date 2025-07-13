@@ -668,12 +668,12 @@ export async function removeInterestedEvent(eventId, userId) {
 
 // Post/Event Comments
 
-export async function createComment(postId, authorId, content) {
+export async function createComment(postId, authorId, parentId, content) {
   try {
     const res = await fetch("/api/comments/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ post_id: postId, author_id: authorId, content }),
+      body: JSON.stringify({ post_id: postId, author_id: authorId, parent_id: parentId, content }),
     });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to create comment" };
@@ -767,6 +767,48 @@ export async function removeDislike(postId, userId) {
 }
 
 // Post/Event Feed
+
+/**
+ * Gets comments for a user's post.
+ * @async
+ * @function getUserPostComments
+ * @param {number} userId - The user ID.
+ * @param {number} postId - The post ID.
+ * @param {number} [offset=0] - Pagination offset.
+ * @param {number} [limit=10] - Pagination limit.
+ * @returns {Promise<Object>} Comments or error.
+ */
+export async function getUserPostComments(userId, postId, offset = 0, limit = 10) {
+  try {
+    const res = await fetch(`/api/users/${userId}/posts/${postId}/comments/?offset=${offset}&limit=${limit}`);
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to get comments" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Gets replies to a user's comment.
+ * @async
+ * @function getUserCommentReplies
+ * @param {number} userId - The user ID.
+ * @param {number} commentId - The comment ID.
+ * @param {number} [offset=0] - Pagination offset.
+ * @param {number} [limit=10] - Pagination limit.
+ * @returns {Promise<Object>} Replies or error.
+ */
+export async function getUserCommentReplies(userId, commentId, offset = 0, limit = 10) {
+  try {
+    const res = await fetch(`/api/users/${userId}/comments/${commentId}/replies/?offset=${offset}&limit=${limit}`);
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to get replies" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
 
 export async function getUserFeed(userId, offset = 0, limit = 10) {
   try {

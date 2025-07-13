@@ -186,7 +186,7 @@ class PostgreSQLDatabase(Database):
         pass
 
     # Post/Event Comments
-    def create_comment(self, post_id: int, author_id: int, content: str) -> dict:
+    def create_comment(self, post_id: int, parent_id: int, author_id: int, content: str) -> dict:
         pass
 
     def delete_comment(self, comment_id: int) -> dict:
@@ -212,6 +212,15 @@ class PostgreSQLDatabase(Database):
         pass
 
     # Post/Event Feed
+    def get_user_name(self, user_id:int):
+        pass
+    
+    def get_comments(self, user_id: int, post_id: int, offset: int = 0, limit: int = 10) -> dict:
+        pass
+
+    def get_replies(self, user_id: int, comment_id: int, offset: int = 0, limit: int = 10) -> dict:
+        pass
+
     def get_user_feed(self, user_id: int, offset: int = 0, limit: int = 10) -> dict:
         pass
 

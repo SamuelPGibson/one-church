@@ -32,8 +32,8 @@ class DummyDatabase(Database):
     def __create_dummy_data(self):
         ''' Create some dummy data for testing '''
         self.users = [
-            {"id": 1, "username": "user1", "password": "pass1"},
-            {"id": 2, "username": "user2", "password": "pass2"}
+            {"id": 1, "username": "user1", "password": "pass1", "pfp_url": "https://cw39.com/wp-content/uploads/sites/10/2016/01/s036012017.jpg"},
+            {"id": 2, "username": "user2", "password": "pass2", "pfp_url": "https://helloartsy.com/wp-content/uploads/kids/farm-animals/how-to-draw-a-cow-face/how-to-draw-a-cow-face-step-6.jpg"}
         ]
         self.organizations = [
             {"id": 1, "name": "Org1", "parent_id": 0},
@@ -44,7 +44,7 @@ class DummyDatabase(Database):
              "caption": "This is the caption of the first every post on OneChurch! All for the glory of God!",
              "timestamp": "2023-10-01T10:00:00Z",
              "image_url": "https://t3.ftcdn.net/jpg/02/76/44/92/360_F_276449235_z71XmvtwDHfqxNt6UCK5yl4mAplD3cds.jpg",
-             "location": "Saskatoon", "type": "post", "author_name": "Big Monkey"},
+             "location": "Saskatoon", "type": "post"},
             {"id": 2, "author_id": 2, "caption": "Post by user2", "timestamp": "2023-10-02T10:00:00Z",
              "image_url": "https://t3.ftcdn.net/jpg/02/76/44/92/360_F_276449235_z71XmvtwDHfqxNt6UCK5yl4mAplD3cds.jpg",
              "location": None, "type": "post"},
@@ -60,8 +60,10 @@ class DummyDatabase(Database):
              "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRy5pXMLHcrqN-HmGJ97Rr9bcoAf8_EqzZZOg&s"},
         ]
         self.comments = [
-            {"id": 1, "post_id": 1, "author_id": 2, "content": "Comment on post by user1"},
-            {"id": 2, "post_id": 2, "author_id": 1, "content": "Comment on post by user2"}
+            {"id": 1, "post_id": 1, "parent_id": 0, "author_id": 2, "content": "Comment on post by user1"},
+            {"id": 3, "post_id": 1, "parent_id": 0, "author_id": 2, "content": "Another comment on post by user1"},
+            {"id": 4, "post_id": 1, "parent_id": 0, "author_id": 2, "content": "3rd comment on post by user1"},
+            {"id": 2, "post_id": 2, "parent_id": 0, "author_id": 1, "content": "Comment on post by user2"}
         ]
 
     # Tests
@@ -643,10 +645,11 @@ class DummyDatabase(Database):
         }
 
     # Post/Event Comments
-    def create_comment(self, post_id: int, author_id: int, content: str) -> dict:
+    def create_comment(self, post_id: int, parent_id: int, author_id: int, content: str) -> dict:
         comment = {
-            "id": self._post_id,
+            "id": len(self.comments) + 1,
             "post_id": post_id,
+            "parent_id": parent_id,
             "author_id": author_id,
             "content": content
         }
@@ -767,12 +770,79 @@ class DummyDatabase(Database):
         }
     
     # Post/Event Feed
+    def _get_user_name_pfp(self, user_id: int) -> tuple[str, str]:
+        """ Returns username and profile picture url - INTERNAL USE ONLY """
+        for user in self.users:
+            if user['id'] == user_id:
+                return user['username'], user.get('pfp_url', '')
+        return "Unknown User", ""
+    
+    def get_user_name(self, user_id:int):
+        for user in self.users:
+            if user['id'] == user_id:
+                return {
+                    "success": True,
+                    "message": "Successfully fetched user name",
+                    "data": user["username"]
+                }
+        return {
+            "success": False,
+            "message": "Failed to fetch user name - id does not exist"
+        }
+    
+    def get_comments(self, user_id: int, post_id: int, offset: int = 0, limit: int = 10) -> dict:
+        comments = [comment for comment in self.comments if comment['post_id'] == post_id and comment['parent_id'] == 0]
+        comments = comments[offset:offset + limit]
+        for comment in comments:
+            comment['author_name'], comment['author_pfp'] = self._get_user_name_pfp(comment['author_id'])
+            like_user_ids = [x['user_id'] for x in self.likes if x['post_id'] == post_id]
+            dislike_user_ids = [x['user_id'] for x in self.dislikes if x['post_id'] == post_id]
+            comment['like_count'] = len(like_user_ids)
+            comment['dislike_count'] = len(dislike_user_ids)
+            comment['user_liked'] = user_id in like_user_ids
+            comment['user_disliked'] = user_id in dislike_user_ids
+            comment['reply_count'] = len([x for x in self.comments if x['parent_id'] == comment['id']])
+        print(comments)
+        return {
+            "success": True,
+            "message": "Comments retrieved successfully",
+            "data": comments
+        }
+    
+    def get_replies(self, user_id: int, comment_id: int, offset: int = 0, limit: int = 10) -> dict:
+        replies = [reply for reply in self.comments if reply['parent_id'] == comment_id]
+        replies = replies[offset:offset + limit]
+        for reply in replies:
+            reply['author_name'], reply['author_pfp'] = self._get_user_name_pfp(reply['author_id'])
+            like_user_ids = [x['user_id'] for x in self.likes if x['post_id'] == reply['post_id']]
+            dislike_user_ids = [x['user_id'] for x in self.dislikes if x['post_id'] == reply['post_id']]
+            reply['like_count'] = len(like_user_ids)
+            reply['dislike_count'] = len(dislike_user_ids)
+            reply['user_liked'] = user_id in like_user_ids
+            reply['user_disliked'] = user_id in dislike_user_ids
+            reply['reply_count'] = len([x for x in self.comments if x['parent_id'] == reply['id']])
+        return {
+            "success": True,
+            "message": "Replies retrieved successfully",
+            "data": replies
+        }
+
     def get_user_feed(self, user_id: int, offset: int = 0, limit: int = 10) -> dict:
-        feed = self.posts + self.events
+        feed = (self.posts + self.events)[offset:offset + limit]
+        for item in feed:
+            item['author_name'], item['author_pfp'] = self._get_user_name_pfp(item['author_id'])
+            like_user_ids = [x['user_id'] for x in self.likes if x['post_id'] == item['id']]
+            dislike_user_ids = [x['user_id'] for x in self.dislikes if x['post_id'] == item['id']]
+            item['like_count'] = len(like_user_ids)
+            item['dislike_count'] = len(dislike_user_ids)
+            item['user_liked'] = user_id in like_user_ids
+            item['user_disliked'] = user_id in dislike_user_ids
+            item['comment_count'] = len([x for x in self.comments if x['post_id'] == item['id']])
+            item['comments'] = self.get_comments(user_id, item['id'], 0, 2)['data'] if item['type'] == 'post' else []
         return {
             "success": True,
             "message": "User feed retrieved successfully",
-            "data": feed[offset:offset + limit]
+            "data": feed
         }
 
     # Search

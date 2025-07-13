@@ -812,12 +812,13 @@ class Database(ABC):
 
     # Post/Event Comments
     @abstractmethod
-    def create_comment(self, post_id: int, author_id: int, content: str) -> dict:
+    def create_comment(self, post_id: int, parent_id: int, author_id: int, content: str) -> dict:
         '''
         Purpose:
             Create a new comment on a post or event.
         Pre-conditions:
             :param post_id: The ID of the post or event to comment on
+            :param parent_id: The ID of the parent comment (if it's a reply)
             :param author_id: The ID of the user creating the comment
             :param content: The content of the comment
         Post-conditions:
@@ -956,6 +957,63 @@ class Database(ABC):
         '''
 
     # Post/Event Feed
+    @abstractmethod
+    def get_user_name(self, user_id:int):
+        '''
+        Purpose
+            Retrieve the username of the given user id
+        Pre-conditions:
+            :param user_id: The ID of the user whose name is to be retrieved
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the username with keys:
+                            'success' is True if feed retrieval is successful, otherwise False.
+                            'message' contains additional information about the result.
+                            'data' contains the user name
+
+        '''
+    
+    @abstractmethod
+    def get_comments(self, user_id: int, post_id: int, offset: int = 0, limit: int = 10) -> dict:
+        '''
+        Purpose
+            Retrieves comments for the given post to be viewed by the given user
+        Pre-conditions:
+            :param user_id: The ID of the user viewing the comments
+            :param post_id: The ID of the post/event for which comments are being retrieved
+            :param offset: The offset for pagination (default is 0)
+            :param limit: The maximum number of items to retrieve (default is 10)
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the comments with keys:
+                            'success' is True if comments retrieval is successful, otherwise False.
+                            'message' contains additional information about the result.
+                            'data' contains the list of comments if successful.
+        '''
+
+    @abstractmethod
+    def get_replies(self, user_id: int, comment_id: int, offset: int = 0, limit: int = 10) -> dict:
+        '''
+        Purpose
+            Retrieves replies to a comment for the given user.
+            This method is optional and may not be implemented in all database backends.
+            If not implemented, it should raise NotImplementedError.
+        Pre-conditions:
+            :param user_id: The ID of the user viewing the replies
+            :param comment_id: The ID of the comment for which replies are being retrieved
+            :param offset: The offset for pagination (default is 0)
+            :param limit: The maximum number of items to retrieve (default is 10)
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the replies with keys:
+                            'success' is True if replies retrieval is successful, otherwise False.
+                            'message' contains additional information about the result.
+                            'data' contains the list of replies if successful.
+        '''
+
     @abstractmethod
     def get_user_feed(self, user_id: int, offset: int = 0, limit: int = 10) -> dict:
         '''

@@ -1,4 +1,4 @@
-import Comment from './Comment';
+import CommentList from './Comment';
 import React, { useState } from 'react';
 
 /**
@@ -17,7 +17,7 @@ function PostHeader({ userId, post }) {
         <div className="flex items-center gap-4">
             {/* Author profile picture */}
             <img
-                src={post.authorProfilePic || "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg"}
+                src={post.author_pfp || "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg"}
                 alt="Author"
                 className="w-12 h-12 rounded-full object-cover"
             />
@@ -114,10 +114,6 @@ function PostActionBar({ userId, post, onLike, onDislike }) {
 }
 
 function Post({ userId, post }) {
-    const [showComments, setShowComments] = useState(false);
-
-    // Dummy comments array for demonstration; replace with real data as needed
-    const comments = post.comments || [];
 
     return (
         <div className="post bg-white rounded-lg shadow-md p-6 mb-6">
@@ -133,24 +129,7 @@ function Post({ userId, post }) {
                 )}
             </div>
             <PostActionBar userId={userId} post={post} />
-            <button
-                onClick={() => setShowComments(!showComments)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition mb-3"
-            >
-                {showComments ? 'Hide Comments' : 'Show Comments'}
-            </button>
-            { /* TODO: make comment component - show first few with button to expand */ }
-            {showComments && (
-                <div className="post-comments mt-4 border-t pt-4">
-                    {comments.length === 0 ? (
-                        <p className="text-gray-500 italic">No comments yet.</p>
-                    ) : (
-                        comments.map((commentId) => (
-                            <Comment key={commentId} commentId={commentId} />
-                        ))
-                    )}
-                </div>
-            )}
+            <CommentList userId={userId} post={post} />
         </div>
     );
 }
