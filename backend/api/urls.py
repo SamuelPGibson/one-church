@@ -85,6 +85,8 @@ urlpatterns = [
     path('posts/<int:post_id>/dislike/<int:user_id>/remove/', views.remove_dislike),
 
     # Post/Event Feed
+    path('users/<int:user_id>/posts/<int:post_id>/comments/', views.get_comments),
+    path('users/<int:user_id>/comments/<int:comment_id>/replies/', views.get_replies),
     path('users/<int:user_id>/feed/', views.get_user_feed),
 
     # Search

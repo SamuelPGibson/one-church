@@ -394,6 +394,7 @@ def create_comment(request: HttpRequest) -> JsonResponse:
             data = json.loads(request.body)
             result = db.create_comment(
                 data["post_id"],
+                data['parent_id'],
                 data["author_id"],
                 data["content"]
             )
@@ -450,6 +451,22 @@ def remove_dislike(request: HttpRequest, post_id: int, user_id: int) -> JsonResp
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 # Post/Event Feed
+def get_comments(request: HttpRequest, user_id: int, post_id: int) -> JsonResponse:
+    if request.method == "GET":
+        offset = int(request.GET.get("offset", 0))
+        limit = int(request.GET.get("limit", 10))
+        result = db.get_comments(user_id, post_id, offset, limit)
+        return JsonResponse(result, status=get_status_code(result))
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def get_replies(request: HttpRequest, user_id: int, comment_id: int) -> JsonResponse:
+    if request.method == "GET":
+        offset = int(request.GET.get("offset", 0))
+        limit = int(request.GET.get("limit", 10))
+        result = db.get_replies(user_id, comment_id, offset, limit)
+        return JsonResponse(result, status=get_status_code(result))
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
 def get_user_feed(request: HttpRequest, user_id: int) -> JsonResponse:
     if request.method == "GET":
         offset = int(request.GET.get("offset", 0))
@@ -551,6 +568,9 @@ like = csrf_exempt(like)
 remove_like = csrf_exempt(remove_like)
 dislike = csrf_exempt(dislike)
 remove_dislike = csrf_exempt(remove_dislike)
+get_comments = csrf_exempt(get_comments)
+get_replies = csrf_exempt(get_replies)
+get_user_feed = csrf_exempt(get_user_feed)
 search = csrf_exempt(search)
 search_organizations = csrf_exempt(search_organizations)
 search_events = csrf_exempt(search_events)

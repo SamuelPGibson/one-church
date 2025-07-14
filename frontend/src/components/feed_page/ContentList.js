@@ -42,9 +42,9 @@ export default function ContentList({ userId }) {
             ) : (
                 items.map(item => (
                     item.type === "post" ? (
-                        <Post key={item.id} post={item} />
+                        <Post key={item.id} userId={userId} post={item} />
                     ) : item.type === "event" ? (
-                        <Event key={item.id} event={item} />
+                        <Event key={item.id} userId={userId} event={item} />
                     ) : (
                         <div key={item.id}>Unknown content type</div>
                     )
