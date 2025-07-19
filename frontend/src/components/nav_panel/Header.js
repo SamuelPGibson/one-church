@@ -1,13 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-function Header() {
+function Header({ userId, user, setUserId }) {
+
     const navigate = useNavigate();
 
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
     function handleLogout() {
-        localStorage.removeItem("currentUser");
+        setUserId(null);
         navigate("/");
     }
 
@@ -49,13 +48,30 @@ function Header() {
                 </nav>
 
                 {/* Auth Button */}
-                {currentUser ? (
-                    <button
-                        onClick={handleLogout}
-                        className="bg-white text-indigo-600 px-4 py-2 rounded hover:bg-indigo-100 transition"
-                    >
-                        Logout
-                    </button>
+                {userId ? (
+                    <div className="relative group">
+                        <button className="flex items-center focus:outline-none">
+                            <img
+                                src={user?.pfp_url || "/default-pfp.png"}
+                                alt="Profile"
+                                className="w-8 h-8 rounded-full border-2 border-white"
+                            />
+                        </button>
+                        <div className="absolute right-0 mt-2 w-40 bg-white text-indigo-600 rounded shadow-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity z-10">
+                            <Link
+                                to="/profile"
+                                className="block px-4 py-2 hover:bg-indigo-100 transition"
+                            >
+                                Profile
+                            </Link>
+                            <button
+                                onClick={handleLogout}
+                                className="block w-full text-left px-4 py-2 hover:bg-indigo-100 transition"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    </div>
                 ) : (
                     <Link
                         to="/login"

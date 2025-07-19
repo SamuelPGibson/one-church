@@ -146,7 +146,7 @@ export async function updateUser(userId, username) {
  */
 export async function getUser(userId) {
   try {
-    const res = await fetch(`/api/users/${userId}/`);
+    const res = await fetch(`/api/users/${userId}/info/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get user" };
     return data;
