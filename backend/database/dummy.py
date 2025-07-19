@@ -31,6 +31,8 @@ class DummyDatabase(Database):
 
     def __create_dummy_data(self):
         ''' Create some dummy data for testing '''
+        self._account_id = 3
+        self._post_id = 3
         self.users = [
             {"id": 1, "username": "user1", "password": "pass1", "pfp_url": "https://cw39.com/wp-content/uploads/sites/10/2016/01/s036012017.jpg"},
             {"id": 2, "username": "user2", "password": "pass2", "pfp_url": "https://helloartsy.com/wp-content/uploads/kids/farm-animals/how-to-draw-a-cow-face/how-to-draw-a-cow-face-step-6.jpg"}
