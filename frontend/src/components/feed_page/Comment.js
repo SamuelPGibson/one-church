@@ -1,94 +1,10 @@
 
-import { getUserPostComments, getUserCommentReplies, createComment, like, dislike, removeLike, removeDislike } from '../../api/api';
+import { getUserPostComments, getUserCommentReplies, createComment, getComment, like, dislike, removeLike, removeDislike } from '../../api/api';
+import { CommentActionBar } from './ActionBar';
 import React, { useState, useEffect } from 'react';
 
 
-function CommentActionBar({ userId, comment, onReply }) {
-    const [likeState, setLikeState] = useState(comment.user_liked || false);
-    const [dislikeState, setDislikeState] = useState(comment.user_disliked || false);
-    const [replyOpen, setReplyOpen] = useState(false);
-    const [replyValue, setReplyValue] = useState('');
 
-    const handleLike = () => {
-        if (!likeState) {
-            setLikeState(true);
-            like(comment.id, userId).catch(() => {
-                setLikeState(false);
-            });
-        }
-    };
-
-    const handleDislike = () => {
-        if (!dislikeState) {
-            setDislikeState(true);
-            dislike(comment.id, userId).catch(() => {
-                setDislikeState(false);
-            });
-        }
-    };
-
-    const handleReplyClick = () => {
-        setReplyOpen(!replyOpen);
-    };
-
-    const handleSendReply = () => {
-        if (onReply && replyValue.trim()) {
-            onReply(replyValue);
-            setReplyValue('');
-            setReplyOpen(false);
-        }
-    };
-
-    return (
-        <>
-            <div className="flex items-center gap-6 mb-2">
-                <button
-                    className={`flex items-center gap-1 px-2 py-1 rounded ${likeState ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'}`}
-                    onClick={handleLike}
-                    aria-label="Like"
-                    disabled={likeState}
-                >
-                    <span role="img" aria-label="like">👍</span>
-                    {comment.like_count + (likeState && !comment.user_liked ? 1 : 0)}
-                </button>
-                <button
-                    className={`flex items-center gap-1 px-2 py-1 rounded ${dislikeState ? 'bg-red-100 text-red-600' : 'hover:bg-gray-100'}`}
-                    onClick={handleDislike}
-                    aria-label="Dislike"
-                    disabled={dislikeState}
-                >
-                    <span role="img" aria-label="dislike">👎</span>
-                    {comment.dislike_count + (dislikeState && !comment.user_disliked ? 1 : 0)}
-                </button>
-                <button
-                    className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
-                    onClick={handleReplyClick}
-                    aria-label="Reply"
-                >
-                    <span role="img" aria-label="reply">💬</span>
-                    Reply{typeof comment.reply_count === 'number' ? ` (${comment.reply_count})` : ''}
-                </button>
-            </div>
-            {replyOpen && (
-                <div className="w-full mb-2 flex gap-2">
-                    <input
-                        type="text"
-                        placeholder="Write a reply..."
-                        className="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring"
-                        value={replyValue}
-                        onChange={e => setReplyValue(e.target.value)}
-                    />
-                    <button
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
-                        onClick={handleSendReply}
-                    >
-                        Send
-                    </button>
-                </div>
-            )}
-        </>
-    );
-}
 
 const Comment = ({ userId, comment }) => {
     const [showReplies, setShowReplies] = useState(false);
@@ -100,7 +16,7 @@ const Comment = ({ userId, comment }) => {
             setLoadingReplies(true);
             try {
                 const fetchedReplies = await getUserCommentReplies(userId, comment.id);
-                setReplies(fetchedReplies || []);
+                setReplies(fetchedReplies.data || []);
             } catch (e) {
                 setReplies([]);
             }
@@ -109,11 +25,23 @@ const Comment = ({ userId, comment }) => {
         setShowReplies(!showReplies);
     };
 
-    const handleReply = (replyText) => {
-        createComment({ postId: comment.post_id, authorId: userId, parent_id: comment.id, content: replyText })
-            .then(newReply => {
-                setReplies([...(replies || []), newReply]);
+    const handleReply = async (replyText) => {
+        try {
+            const newReply = await createComment({
+                postId: comment.post_id,
+                authorId: userId,
+                parent_id: comment.id,
+                content: replyText
             });
+            if (newReply && newReply.id) {
+                const replyDetail = await getComment(newReply.id);
+                if (replyDetail && replyDetail.success) {
+                    setReplies([replyDetail.data, ...replies]);
+                }
+            }
+        } catch (error) {
+            console.error("Error creating reply:", error);
+        }
     };
 
     return (

@@ -1,4 +1,5 @@
 import CommentList from './Comment';
+import { PostActionBar } from './ActionBar'; // must have {} for non-default exports
 import React, { useState } from 'react';
 
 /**
@@ -38,78 +39,6 @@ function PostHeader({ userId, post }) {
                 Follow
             </button>
         </div>
-    );
-}
-
-function PostActionBar({ userId, post, onLike, onDislike }) {
-    const [likeState, setLikeState] = useState(false);
-    const [dislikeState, setDislikeState] = useState(false);
-    const [commentOpen, setCommentOpen] = useState(false);
-
-    const handleLike = () => {
-        setLikeState(true);
-        if (onLike) onLike();
-    };
-
-    const handleDislike = () => {
-        setDislikeState(true);
-        if (onDislike) onDislike();
-    };
-
-    const handleCommentClick = () => {
-        setCommentOpen(!commentOpen);
-        //if (onCommentClick) onCommentClick();
-    }
-
-    return (
-        <>
-        <div className="flex items-center gap-6 mb-4">
-            <button
-                className={`flex items-center gap-1 px-2 py-1 rounded ${likeState ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'}`}
-                onClick={handleLike}
-                aria-label="Like"
-                >
-                <span role="img" aria-label="like">👍</span>
-                0
-            </button>
-            <button
-                className={`flex items-center gap-1 px-2 py-1 rounded ${dislikeState ? 'bg-red-100 text-red-600' : 'hover:bg-gray-100'}`}
-                onClick={handleDislike}
-                aria-label="Dislike"
-            >
-                <span role="img" aria-label="dislike">👎</span>
-                0
-            </button>
-            <button
-                className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
-                onClick={handleCommentClick}
-                aria-label="Comment"
-                >
-                <span role="img" aria-label="comment">💬</span>
-                Comment
-            </button>
-            <button
-                className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
-                // onClick={onShare} // Implement onShare if needed
-                aria-label="Share"
-                >
-                <span role="img" aria-label="share">🔗</span>
-                Share
-            </button>
-        </div>
-        {commentOpen && (
-            <div className="w-full mb-4">
-                <input
-                    type="text"
-                    placeholder="Write a comment..."
-                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
-                />
-                <button className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">
-                    Post
-                </button>
-            </div>
-        )}
-        </>
     );
 }
 
