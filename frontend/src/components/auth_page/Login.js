@@ -26,6 +26,7 @@ export default function Login({ setUserId }) {
         } else {
             setUserId(result.id);
             console.log("User Logged in: ", result.id);
+            navigate("/feed");
         }
     };
 

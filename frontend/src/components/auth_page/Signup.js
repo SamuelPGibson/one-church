@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createUser } from "../../api/api";
 
 function Signup({ setUserId }) {
@@ -10,6 +11,8 @@ function Signup({ setUserId }) {
         profilePicture: "",
     });
 
+    const navigate = useNavigate();
+
     const handleChange = async (e) => {
         setFormData({
             ...formData,
@@ -20,14 +23,19 @@ function Signup({ setUserId }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const result = await createUser({
-        username: formData.username,
-        password: formData.password
+            username: formData.username,
+            password: formData.password
         });
+
+        if (result.error) {
+            alert(result.error);
+        } else {
+            setUserId(result.id);
+            console.log("Created user: ", result.id);
+            navigate("/feed");
+        }
     }
-      
-
     
-
     return (
         <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
             <form
@@ -105,4 +113,5 @@ function Signup({ setUserId }) {
         </main>
     );
 }
+
 export default Signup;
