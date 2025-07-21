@@ -11,9 +11,9 @@
  * @param {string} password
  * @returns {Promise<Object>} Auth data or error.
  */
-export async function loginUser(username, password) {
+export async function loginUser(username, password, baseUrl = "") {
   try {
-    const res = await fetch("/api/login/", {
+    const res = await fetch(`${baseUrl}/api/login/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -32,9 +32,9 @@ export async function loginUser(username, password) {
  * @function logout
  * @returns {Promise<Object>} Result or error.
  */
-export async function logoutUser() {
+export async function logoutUser(baseUrl = "") {
   try {
-    const res = await fetch("/api/logout/", { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/logout/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to logout" };
     return data;
@@ -52,9 +52,9 @@ export async function logoutUser() {
  * @returns {Promise<Object>} The created user data if successful, or an error object if failed.
  * @throws {Error} If a network error or server issue occurs.
  */
-export async function createUser(userData) {
+export async function createUser(userData, baseUrl = "") {
   try {
-    const res = await fetch("/api/users/", {
+    const res = await fetch(`${baseUrl}/api/users/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
@@ -80,9 +80,9 @@ export async function createUser(userData) {
  * @param {number} userId - The ID of the user to delete.
  * @returns {Promise<Object>} Result of deletion or error.
  */
-export async function deleteUser(userId) {
+export async function deleteUser(userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/`, { method: "DELETE" });
+    const res = await fetch(`${baseUrl}/api/users/${userId}/`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to delete user" };
     return data;
@@ -99,9 +99,9 @@ export async function deleteUser(userId) {
  * @param {string} newPassword - The new password.
  * @returns {Promise<Object>} Result or error.
  */
-export async function userChangePassword(userId, newPassword) {
+export async function userChangePassword(userId, newPassword, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/change_password/`, {
+    const res = await fetch(`${baseUrl}/api/users/${userId}/change_password/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ new_password: newPassword }),
@@ -122,9 +122,9 @@ export async function userChangePassword(userId, newPassword) {
  * @param {string} username - The new username.
  * @returns {Promise<Object>} Result or error.
  */
-export async function updateUser(userId, username) {
+export async function updateUser(userId, username, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/`, {
+    const res = await fetch(`${baseUrl}/api/users/${userId}/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username }),
@@ -144,9 +144,9 @@ export async function updateUser(userId, username) {
  * @param {number} userId - The user ID.
  * @returns {Promise<Object>} User data or error.
  */
-export async function getUser(userId) {
+export async function getUser(userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/info/`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/info/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get user" };
     return data;
@@ -162,9 +162,9 @@ export async function getUser(userId) {
  * @param {number} userId - The user ID.
  * @returns {Promise<Object>} Organizations or error.
  */
-export async function getUserOrganizationsAdmin(userId) {
+export async function getUserOrganizationsAdmin(userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/organizations/admin/`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/organizations/admin/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organizations" };
     return data;
@@ -180,9 +180,9 @@ export async function getUserOrganizationsAdmin(userId) {
  * @param {number} userId - The user ID.
  * @returns {Promise<Object>} Organizations or error.
  */
-export async function getUserOrganizationsMember(userId) {
+export async function getUserOrganizationsMember(userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/organizations/member/`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/organizations/member/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organizations" };
     return data;
@@ -198,9 +198,9 @@ export async function getUserOrganizationsMember(userId) {
  * @param {number} userId - The user ID.
  * @returns {Promise<Object>} Organizations or error.
  */
-export async function getUserOrganizationsCongregant(userId) {
+export async function getUserOrganizationsCongregant(userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/organizations/congregant/`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/organizations/congregant/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organizations" };
     return data;
@@ -216,9 +216,9 @@ export async function getUserOrganizationsCongregant(userId) {
  * @param {number} userId - The user ID.
  * @returns {Promise<Object>} Posts or error.
  */
-export async function getUserPosts(userId) {
+export async function getUserPosts(userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/posts/`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/posts/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get posts" };
     return data;
@@ -234,9 +234,9 @@ export async function getUserPosts(userId) {
  * @param {number} userId - The user ID.
  * @returns {Promise<Object>} Followers or error.
  */
-export async function getUserFollowers(userId) {
+export async function getUserFollowers(userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/followers/`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/followers/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get followers" };
     return data;
@@ -252,9 +252,9 @@ export async function getUserFollowers(userId) {
  * @param {number} userId - The user ID.
  * @returns {Promise<Object>} Following or error.
  */
-export async function getUserFollowing(userId) {
+export async function getUserFollowing(userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/following/`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/following/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get following" };
     return data;
@@ -265,9 +265,9 @@ export async function getUserFollowing(userId) {
 
 // Organization Account
 
-export async function createOrganization(name, parent_id) {
+export async function createOrganization(name, parent_id, baseUrl = "") {
   try {
-    const res = await fetch("/api/organizations/", {
+    const res = await fetch(`${baseUrl}/api/organizations/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, parent_id }),
@@ -280,9 +280,9 @@ export async function createOrganization(name, parent_id) {
   }
 }
 
-export async function deleteOrganization(orgId) {
+export async function deleteOrganization(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/`, { method: "DELETE" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to delete organization" };
     return data;
@@ -291,9 +291,9 @@ export async function deleteOrganization(orgId) {
   }
 }
 
-export async function updateOrganization(orgId, name) {
+export async function updateOrganization(orgId, name, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/`, {
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
@@ -306,9 +306,9 @@ export async function updateOrganization(orgId, name) {
   }
 }
 
-export async function getOrganization(orgId) {
+export async function getOrganization(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/`);
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organization" };
     return data;
@@ -317,9 +317,9 @@ export async function getOrganization(orgId) {
   }
 }
 
-export async function getOrganizationChildren(orgId) {
+export async function getOrganizationChildren(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/children/`);
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/children/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organization children" };
     return data;
@@ -328,9 +328,9 @@ export async function getOrganizationChildren(orgId) {
   }
 }
 
-export async function getOrganizationPosts(orgId) {
+export async function getOrganizationPosts(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/posts/`);
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/posts/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organization posts" };
     return data;
@@ -339,9 +339,9 @@ export async function getOrganizationPosts(orgId) {
   }
 }
 
-export async function getOrganizationAdmins(orgId) {
+export async function getOrganizationAdmins(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/admins/`);
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/admins/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organization admins" };
     return data;
@@ -350,9 +350,9 @@ export async function getOrganizationAdmins(orgId) {
   }
 }
 
-export async function getOrganizationMembers(orgId) {
+export async function getOrganizationMembers(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/members/`);
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/members/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organization members" };
     return data;
@@ -361,9 +361,9 @@ export async function getOrganizationMembers(orgId) {
   }
 }
 
-export async function getOrganizationCongregants(orgId) {
+export async function getOrganizationCongregants(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/congregants/`);
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/congregants/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organization congregants" };
     return data;
@@ -372,9 +372,9 @@ export async function getOrganizationCongregants(orgId) {
   }
 }
 
-export async function getOrganizationFollowers(orgId) {
+export async function getOrganizationFollowers(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/followers/`);
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/followers/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organization followers" };
     return data;
@@ -383,9 +383,9 @@ export async function getOrganizationFollowers(orgId) {
   }
 }
 
-export async function getOrganizationFollowing(orgId) {
+export async function getOrganizationFollowing(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/following/`);
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/following/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organization following" };
     return data;
@@ -396,9 +396,9 @@ export async function getOrganizationFollowing(orgId) {
 
 // User/Organization Affiliation
 
-export async function addOrganizationAdmin(orgId, userId) {
+export async function addOrganizationAdmin(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/admins/${userId}/add/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/admins/${userId}/add/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to add admin" };
     return data;
@@ -407,9 +407,9 @@ export async function addOrganizationAdmin(orgId, userId) {
   }
 }
 
-export async function removeOrganizationAdmin(orgId, userId) {
+export async function removeOrganizationAdmin(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/admins/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/admins/${userId}/remove/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove admin" };
     return data;
@@ -418,9 +418,9 @@ export async function removeOrganizationAdmin(orgId, userId) {
   }
 }
 
-export async function addOrganizationMember(orgId, userId) {
+export async function addOrganizationMember(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/members/${userId}/add/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/members/${userId}/add/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to add member" };
     return data;
@@ -429,9 +429,9 @@ export async function addOrganizationMember(orgId, userId) {
   }
 }
 
-export async function removeOrganizationMember(orgId, userId) {
+export async function removeOrganizationMember(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/members/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/members/${userId}/remove/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove member" };
     return data;
@@ -440,9 +440,9 @@ export async function removeOrganizationMember(orgId, userId) {
   }
 }
 
-export async function addOrganizationCongregant(orgId, userId) {
+export async function addOrganizationCongregant(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/congregants/${userId}/add/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/congregants/${userId}/add/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to add congregant" };
     return data;
@@ -451,9 +451,9 @@ export async function addOrganizationCongregant(orgId, userId) {
   }
 }
 
-export async function removeOrganizationCongregant(orgId, userId) {
+export async function removeOrganizationCongregant(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/organizations/${orgId}/congregants/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/congregants/${userId}/remove/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove congregant" };
     return data;
@@ -464,9 +464,9 @@ export async function removeOrganizationCongregant(orgId, userId) {
 
 // Follow/Unfollow
 
-export async function follow(followerId, followeeId) {
+export async function follow(followerId, followeeId, baseUrl = "") {
   try {
-    const res = await fetch("/api/follow/", {
+    const res = await fetch(`${baseUrl}/api/follow/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ follower_id: followerId, followee_id: followeeId }),
@@ -479,9 +479,9 @@ export async function follow(followerId, followeeId) {
   }
 }
 
-export async function unfollow(followerId, followeeId) {
+export async function unfollow(followerId, followeeId, baseUrl = "") {
   try {
-    const res = await fetch("/api/unfollow/", {
+    const res = await fetch(`${baseUrl}/api/unfollow/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ follower_id: followerId, followee_id: followeeId }),
@@ -496,11 +496,11 @@ export async function unfollow(followerId, followeeId) {
 
 // Posts
 
-export async function createPost(authorId, caption, imageUrl, location = null) {
+export async function createPost(authorId, caption, imageUrl, location = null, baseUrl = "") {
   try {
     const body = { author_id: authorId, caption, image_url: imageUrl };
     if (location) body.location = location;
-    const res = await fetch("/api/posts/", {
+    const res = await fetch(`${baseUrl}/api/posts/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -513,9 +513,9 @@ export async function createPost(authorId, caption, imageUrl, location = null) {
   }
 }
 
-export async function deletePost(postId) {
+export async function deletePost(postId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/posts/${postId}/`, { method: "DELETE" });
+    const res = await fetch(`${baseUrl}/api/posts/${postId}/`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to delete post" };
     return data;
@@ -524,11 +524,11 @@ export async function deletePost(postId) {
   }
 }
 
-export async function updatePost(postId, authorId, caption, imageUrl, location = null) {
+export async function updatePost(postId, authorId, caption, imageUrl, location = null, baseUrl = "") {
   try {
     const body = { author_id: authorId, caption, image_url: imageUrl };
     if (location) body.location = location;
-    const res = await fetch(`/api/posts/${postId}/`, {
+    const res = await fetch(`${baseUrl}/api/posts/${postId}/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -541,9 +541,9 @@ export async function updatePost(postId, authorId, caption, imageUrl, location =
   }
 }
 
-export async function getPost(postId) {
+export async function getPost(postId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/posts/${postId}/`);
+    const res = await fetch(`${baseUrl}/api/posts/${postId}/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get post" };
     return data;
@@ -554,9 +554,9 @@ export async function getPost(postId) {
 
 // Events
 
-export async function createEvent(authorId, title, description, startTime, endTime, location) {
+export async function createEvent(authorId, title, description, startTime, endTime, location, baseUrl = "") {
   try {
-    const res = await fetch("/api/events/", {
+    const res = await fetch(`${baseUrl}/api/events/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -576,9 +576,9 @@ export async function createEvent(authorId, title, description, startTime, endTi
   }
 }
 
-export async function deleteEvent(eventId) {
+export async function deleteEvent(eventId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/events/${eventId}/`, { method: "DELETE" });
+    const res = await fetch(`${baseUrl}/api/events/${eventId}/`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to delete event" };
     return data;
@@ -587,9 +587,9 @@ export async function deleteEvent(eventId) {
   }
 }
 
-export async function updateEvent(eventId, authorId, title, description, startTime, endTime, location) {
+export async function updateEvent(eventId, authorId, title, description, startTime, endTime, location, baseUrl = "") {
   try {
-    const res = await fetch(`/api/events/${eventId}/`, {
+    const res = await fetch(`${baseUrl}/api/events/${eventId}/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -609,9 +609,9 @@ export async function updateEvent(eventId, authorId, title, description, startTi
   }
 }
 
-export async function getEvent(eventId) {
+export async function getEvent(eventId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/events/${eventId}/`);
+    const res = await fetch(`${baseUrl}/api/events/${eventId}/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get event" };
     return data;
@@ -622,9 +622,9 @@ export async function getEvent(eventId) {
 
 // Events Going/Interested
 
-export async function goingEvent(eventId, userId) {
+export async function goingEvent(eventId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/events/${eventId}/going/${userId}/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/events/${eventId}/going/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to mark going" };
     return data;
@@ -633,9 +633,9 @@ export async function goingEvent(eventId, userId) {
   }
 }
 
-export async function removeGoingEvent(eventId, userId) {
+export async function removeGoingEvent(eventId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/events/${eventId}/going/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/events/${eventId}/going/${userId}/remove/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove going" };
     return data;
@@ -644,9 +644,9 @@ export async function removeGoingEvent(eventId, userId) {
   }
 }
 
-export async function interestedEvent(eventId, userId) {
+export async function interestedEvent(eventId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/events/${eventId}/interested/${userId}/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/events/${eventId}/interested/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to mark interested" };
     return data;
@@ -655,9 +655,9 @@ export async function interestedEvent(eventId, userId) {
   }
 }
 
-export async function removeInterestedEvent(eventId, userId) {
+export async function removeInterestedEvent(eventId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/events/${eventId}/interested/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/events/${eventId}/interested/${userId}/remove/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove interested" };
     return data;
@@ -668,9 +668,9 @@ export async function removeInterestedEvent(eventId, userId) {
 
 // Post/Event Comments
 
-export async function createComment(postId, authorId, parentId, content) {
+export async function createComment(postId, authorId, parentId, content, baseUrl = "") {
   try {
-    const res = await fetch("/api/comments/", {
+    const res = await fetch(`${baseUrl}/api/comments/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ post_id: postId, author_id: authorId, parent_id: parentId, content }),
@@ -683,9 +683,9 @@ export async function createComment(postId, authorId, parentId, content) {
   }
 }
 
-export async function deleteComment(commentId) {
+export async function deleteComment(commentId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/comments/${commentId}/`, { method: "DELETE" });
+    const res = await fetch(`${baseUrl}/api/comments/${commentId}/`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to delete comment" };
     return data;
@@ -694,9 +694,9 @@ export async function deleteComment(commentId) {
   }
 }
 
-export async function updateComment(commentId, content) {
+export async function updateComment(commentId, content, baseUrl = "") {
   try {
-    const res = await fetch(`/api/comments/${commentId}/`, {
+    const res = await fetch(`${baseUrl}/api/comments/${commentId}/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content }),
@@ -709,9 +709,9 @@ export async function updateComment(commentId, content) {
   }
 }
 
-export async function getComment(commentId) {
+export async function getComment(commentId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/comments/${commentId}/`);
+    const res = await fetch(`${baseUrl}/api/comments/${commentId}/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get comment" };
     return data;
@@ -722,9 +722,9 @@ export async function getComment(commentId) {
 
 // Posts Like/Dislike
 
-export async function like(postId, userId) {
+export async function like(postId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/posts/${postId}/like/${userId}/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/posts/${postId}/like/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to like post" };
     return data;
@@ -733,9 +733,9 @@ export async function like(postId, userId) {
   }
 }
 
-export async function removeLike(postId, userId) {
+export async function removeLike(postId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/posts/${postId}/like/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/posts/${postId}/like/${userId}/remove/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove like" };
     return data;
@@ -744,9 +744,9 @@ export async function removeLike(postId, userId) {
   }
 }
 
-export async function dislike(postId, userId) {
+export async function dislike(postId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/posts/${postId}/dislike/${userId}/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/posts/${postId}/dislike/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to dislike post" };
     return data;
@@ -755,9 +755,9 @@ export async function dislike(postId, userId) {
   }
 }
 
-export async function removeDislike(postId, userId) {
+export async function removeDislike(postId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`/api/posts/${postId}/dislike/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/posts/${postId}/dislike/${userId}/remove/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove dislike" };
     return data;
@@ -778,9 +778,9 @@ export async function removeDislike(postId, userId) {
  * @param {number} [limit=10] - Pagination limit.
  * @returns {Promise<Object>} Comments or error.
  */
-export async function getUserPostComments(userId, postId, offset = 0, limit = 10) {
+export async function getUserPostComments(userId, postId, offset = 0, limit = 10, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/posts/${postId}/comments/?offset=${offset}&limit=${limit}`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/posts/${postId}/comments/?offset=${offset}&limit=${limit}`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get comments" };
     return data;
@@ -799,9 +799,9 @@ export async function getUserPostComments(userId, postId, offset = 0, limit = 10
  * @param {number} [limit=10] - Pagination limit.
  * @returns {Promise<Object>} Replies or error.
  */
-export async function getUserCommentReplies(userId, commentId, offset = 0, limit = 10) {
+export async function getUserCommentReplies(userId, commentId, offset = 0, limit = 10, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/comments/${commentId}/replies/?offset=${offset}&limit=${limit}`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/comments/${commentId}/replies/?offset=${offset}&limit=${limit}`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get replies" };
     return data;
@@ -810,9 +810,9 @@ export async function getUserCommentReplies(userId, commentId, offset = 0, limit
   }
 }
 
-export async function getUserFeed(userId, offset = 0, limit = 10) {
+export async function getUserFeed(userId, offset = 0, limit = 10, baseUrl = "") {
   try {
-    const res = await fetch(`/api/users/${userId}/feed/?offset=${offset}&limit=${limit}`);
+    const res = await fetch(`${baseUrl}/api/users/${userId}/feed/?offset=${offset}&limit=${limit}`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get user feed" };
     return data;
@@ -823,9 +823,9 @@ export async function getUserFeed(userId, offset = 0, limit = 10) {
 
 // Search
 
-export async function search(query, includePosts = true, includeEvents = true, includeOrganizations = true, includeUsers = true) {
+export async function search(query, includePosts = true, includeEvents = true, includeOrganizations = true, includeUsers = true, baseUrl = "") {
   try {
-    const res = await fetch(`/api/search/?query=${encodeURIComponent(query)}&includePosts=${includePosts}&includeEvents=${includeEvents}&includeOrganizations=${includeOrganizations}&includeUsers=${includeUsers}`);
+    const res = await fetch(`${baseUrl}/api/search/?query=${encodeURIComponent(query)}&includePosts=${includePosts}&includeEvents=${includeEvents}&includeOrganizations=${includeOrganizations}&includeUsers=${includeUsers}`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to search" };
     return data;
@@ -834,9 +834,9 @@ export async function search(query, includePosts = true, includeEvents = true, i
   }
 }
 
-export async function searchOrganizations(query) {
+export async function searchOrganizations(query, baseUrl = "") {
   try {
-    const res = await fetch(`/api/search/organizations/?query=${encodeURIComponent(query)}`);
+    const res = await fetch(`${baseUrl}/api/search/organizations/?query=${encodeURIComponent(query)}`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to search organizations" };
     return data;
@@ -845,9 +845,9 @@ export async function searchOrganizations(query) {
   }
 }
 
-export async function searchEvents(query) {
+export async function searchEvents(query, baseUrl = "") {
   try {
-    const res = await fetch(`/api/search/events/?query=${encodeURIComponent(query)}`);
+    const res = await fetch(`${baseUrl}/api/search/events/?query=${encodeURIComponent(query)}`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to search events" };
     return data;
