@@ -10,33 +10,38 @@ const Comment = ({ userId, comment }) => {
     const [showReplies, setShowReplies] = useState(false);
     const [replies, setReplies] = useState([]);
     const [loadingReplies, setLoadingReplies] = useState(false);
+    const [replyCount, setReplyCount] = useState(comment.reply_count || 0);
 
     const handleShowReplies = async () => {
-        if (!showReplies && comment.reply_count > 0) {
+        if (!showReplies && replyCount > 0) {
             setLoadingReplies(true);
             try {
-                const fetchedReplies = await getUserCommentReplies(userId, comment.id);
-                setReplies(fetchedReplies.data || []);
+                const fetchedReplies = await getUserCommentReplies(userId, comment.id, 0, 10);
+                // Merge replies and fetchedReplies, avoiding duplicates by id
+                const newReplies = (fetchedReplies.data || []).filter(
+                    reply => !replies.some(r => r.id === reply.id)
+                );
+                setReplies([...replies, ...newReplies]);
             } catch (e) {
                 setReplies([]);
             }
             setLoadingReplies(false);
+        } else if (replyCount === 0) {
+            setReplies([]); // Clear replies when hiding
         }
         setShowReplies(!showReplies);
     };
 
     const handleReply = async (replyText) => {
         try {
-            const newReply = await createComment({
-                postId: comment.post_id,
-                authorId: userId,
-                parent_id: comment.id,
-                content: replyText
-            });
-            if (newReply && newReply.id) {
-                const replyDetail = await getComment(newReply.id);
-                if (replyDetail && replyDetail.success) {
-                    setReplies([replyDetail.data, ...replies]);
+            const resp = await createComment(comment.post_id, userId, comment.id, replyText);
+            console.log("New reply created:", resp);
+            if (resp && resp.success) {
+                console.log("Adding reply to state:", resp.data);
+                setReplyCount(replyCount + 1);
+                setReplies([resp.data, ...replies]);
+                if (!showReplies) {
+                    handleShowReplies();
                 }
             }
         } catch (error) {
@@ -69,16 +74,17 @@ const Comment = ({ userId, comment }) => {
                 <CommentActionBar
                     userId={userId}
                     comment={comment}
+                    replyCount={replyCount}
                     onReply={handleReply}
                 />
                 {/* Show replies button if there are replies */}
-                {comment.reply_count > 0 && (
+                {replyCount > 0 && (
                     <button
                         className="mt-2 text-blue-600 hover:underline text-sm self-start"
                         onClick={handleShowReplies}
                         disabled={loadingReplies}
                     >
-                        {showReplies ? 'Hide Replies' : `Show Replies (${comment.reply_count})`}
+                        {showReplies ? 'Hide Replies' : `Show Replies (${replyCount})`}
                     </button>
                 )}
                 {/* Replies */}

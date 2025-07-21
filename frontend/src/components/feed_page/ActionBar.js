@@ -141,7 +141,7 @@ function GoingButtons({ userId, event }) {
     );
 }
 
-function CommentActionBar({ userId, comment, onReply }) {
+function CommentActionBar({ userId, comment, replyCount, onReply }) {
     const [replyOpen, setReplyOpen] = useState(false);
     const [replyValue, setReplyValue] = useState('');
 
@@ -169,7 +169,7 @@ function CommentActionBar({ userId, comment, onReply }) {
                         aria-label="Reply"
                     >
                     <span role="img" aria-label="reply">💬</span>
-                    Reply{typeof comment.reply_count === 'number' ? ` (${comment.reply_count})` : ''}
+                    Reply{typeof replyCount === 'number' ? ` (${replyCount})` : ''}
                 </button>
                 )}
             </div>
