@@ -32,9 +32,13 @@ export async function loginUser(username, password, baseUrl = "") {
  * @function logout
  * @returns {Promise<Object>} Result or error.
  */
-export async function logoutUser(baseUrl = "") {
+export async function logoutUser(userId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/logout/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/logout/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId }),
+    });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to logout" };
     return data;
@@ -124,7 +128,7 @@ export async function userChangePassword(userId, newPassword, baseUrl = "") {
  */
 export async function updateUser(userId, username, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/users/${userId}/`, {
+    const res = await fetch(`${baseUrl}/api/users/${userId}/update/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username }),
@@ -293,7 +297,7 @@ export async function deleteOrganization(orgId, baseUrl = "") {
 
 export async function updateOrganization(orgId, name, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/`, {
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/update/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
@@ -308,7 +312,7 @@ export async function updateOrganization(orgId, name, baseUrl = "") {
 
 export async function getOrganization(orgId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/`);
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/info/`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to get organization" };
     return data;
@@ -398,7 +402,7 @@ export async function getOrganizationFollowing(orgId, baseUrl = "") {
 
 export async function addOrganizationAdmin(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/admins/${userId}/add/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/admins/add/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to add admin" };
     return data;
@@ -409,7 +413,7 @@ export async function addOrganizationAdmin(orgId, userId, baseUrl = "") {
 
 export async function removeOrganizationAdmin(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/admins/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/admins/remove/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove admin" };
     return data;
@@ -420,7 +424,7 @@ export async function removeOrganizationAdmin(orgId, userId, baseUrl = "") {
 
 export async function addOrganizationMember(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/members/${userId}/add/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/members/add/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to add member" };
     return data;
@@ -431,7 +435,7 @@ export async function addOrganizationMember(orgId, userId, baseUrl = "") {
 
 export async function removeOrganizationMember(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/members/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/members/remove/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove member" };
     return data;
@@ -442,7 +446,7 @@ export async function removeOrganizationMember(orgId, userId, baseUrl = "") {
 
 export async function addOrganizationCongregant(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/congregants/${userId}/add/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/congregants/add/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to add congregant" };
     return data;
@@ -453,7 +457,7 @@ export async function addOrganizationCongregant(orgId, userId, baseUrl = "") {
 
 export async function removeOrganizationCongregant(orgId, userId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/congregants/${userId}/remove/`, { method: "POST" });
+    const res = await fetch(`${baseUrl}/api/organizations/${orgId}/congregants/remove/${userId}/`, { method: "POST" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to remove congregant" };
     return data;
@@ -496,10 +500,9 @@ export async function unfollow(followerId, followeeId, baseUrl = "") {
 
 // Posts
 
-export async function createPost(authorId, caption, imageUrl, location = null, baseUrl = "") {
+export async function createPost(authorId, caption, imageUrl, location, baseUrl = "") {
   try {
-    const body = { author_id: authorId, caption, image_url: imageUrl };
-    if (location) body.location = location;
+    const body = { author_id: authorId, caption, image_url: imageUrl, location };
     const res = await fetch(`${baseUrl}/api/posts/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -515,7 +518,7 @@ export async function createPost(authorId, caption, imageUrl, location = null, b
 
 export async function deletePost(postId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/posts/${postId}/`, { method: "DELETE" });
+    const res = await fetch(`${baseUrl}/api/posts/${postId}/delete/`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to delete post" };
     return data;
@@ -524,11 +527,10 @@ export async function deletePost(postId, baseUrl = "") {
   }
 }
 
-export async function updatePost(postId, authorId, caption, imageUrl, location = null, baseUrl = "") {
+export async function updatePost(postId, authorId, caption, imageUrl, location, baseUrl = "") {
   try {
-    const body = { author_id: authorId, caption, image_url: imageUrl };
-    if (location) body.location = location;
-    const res = await fetch(`${baseUrl}/api/posts/${postId}/`, {
+    const body = { author_id: authorId, caption, image_url: imageUrl, location };
+    const res = await fetch(`${baseUrl}/api/posts/${postId}/update/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -578,7 +580,7 @@ export async function createEvent(authorId, title, description, startTime, endTi
 
 export async function deleteEvent(eventId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/events/${eventId}/`, { method: "DELETE" });
+    const res = await fetch(`${baseUrl}/api/events/${eventId}/delete/`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to delete event" };
     return data;
@@ -589,7 +591,7 @@ export async function deleteEvent(eventId, baseUrl = "") {
 
 export async function updateEvent(eventId, authorId, title, description, startTime, endTime, location, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/events/${eventId}/`, {
+    const res = await fetch(`${baseUrl}/api/events/${eventId}/update/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -685,7 +687,7 @@ export async function createComment(postId, authorId, parentId, content, baseUrl
 
 export async function deleteComment(commentId, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/comments/${commentId}/`, { method: "DELETE" });
+    const res = await fetch(`${baseUrl}/api/comments/${commentId}/delete/`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to delete comment" };
     return data;
@@ -696,7 +698,7 @@ export async function deleteComment(commentId, baseUrl = "") {
 
 export async function updateComment(commentId, content, baseUrl = "") {
   try {
-    const res = await fetch(`${baseUrl}/api/comments/${commentId}/`, {
+    const res = await fetch(`${baseUrl}/api/comments/${commentId}/update/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content }),
@@ -778,7 +780,7 @@ export async function removeDislike(postId, userId, baseUrl = "") {
  * @param {number} [limit=10] - Pagination limit.
  * @returns {Promise<Object>} Comments or error.
  */
-export async function getUserPostComments(userId, postId, offset = 0, limit = 10, baseUrl = "") {
+export async function getUserPostComments(userId, postId, offset, limit, baseUrl = "") {
   try {
     const res = await fetch(`${baseUrl}/api/users/${userId}/posts/${postId}/comments/?offset=${offset}&limit=${limit}`);
     const data = await res.json();
@@ -799,7 +801,7 @@ export async function getUserPostComments(userId, postId, offset = 0, limit = 10
  * @param {number} [limit=10] - Pagination limit.
  * @returns {Promise<Object>} Replies or error.
  */
-export async function getUserCommentReplies(userId, commentId, offset = 0, limit = 10, baseUrl = "") {
+export async function getUserCommentReplies(userId, commentId, offset, limit, baseUrl = "") {
   try {
     const res = await fetch(`${baseUrl}/api/users/${userId}/comments/${commentId}/replies/?offset=${offset}&limit=${limit}`);
     const data = await res.json();
