@@ -1,3 +1,9 @@
+/**
+ * Unit tests for the API functions
+ * These are just intended to make sure the API functions are connecting and returning expected results.
+ * They do not test the actual functionality of the API.
+ */
+
 
 import * as api from '../api/api.js';
 
