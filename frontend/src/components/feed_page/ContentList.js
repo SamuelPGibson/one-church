@@ -10,7 +10,7 @@ export default function ContentList({ userId }) {
 
     const fetchEvents = async () => {
         try {
-            const response = await getUserFeed(userId);
+            const response = await getUserFeed(userId, 0, 20);
             if (response.success) {
                 setItems(response.data);
             } else {
