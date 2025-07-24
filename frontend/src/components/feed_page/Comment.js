@@ -4,44 +4,55 @@ import { CommentActionBar } from './ActionBar';
 import React, { useState, useEffect } from 'react';
 
 
-
-
 const Comment = ({ userId, comment }) => {
     const [showReplies, setShowReplies] = useState(false);
     const [replies, setReplies] = useState([]);
     const [loadingReplies, setLoadingReplies] = useState(false);
     const [replyCount, setReplyCount] = useState(comment.reply_count || 0);
+    const [visibleReplyCount, setVisibleReplyCount] = useState(0);
+
+    const fetchReplies = async () => {
+        if (replyCount === replies.length) {
+            return;
+        }
+        if (replies.length === 0) {
+            setLoadingReplies(true);
+        }
+        try {
+            // If the user makes a new reply, which is appended to server list
+            // the backend might return that reply, not knowing it is already displayed
+            const fetchedReplies = await getUserCommentReplies(userId, comment.id, replies.length, 8);
+            const newReplies = (fetchedReplies.data || []).filter(
+                reply => !replies.some(r => r.id === reply.id)
+            );
+            setReplies([...replies, ...newReplies]);
+            setVisibleReplyCount(replies.length);
+        } catch (e) {
+            // Optionally handle error
+            console.error("Error fetching replies:", e);
+        }
+        if (loadingReplies) {
+            setLoadingReplies(false);
+        }
+    };
 
     const handleShowReplies = async () => {
-        if (!showReplies && replyCount > 0) {
-            setLoadingReplies(true);
-            try {
-                const fetchedReplies = await getUserCommentReplies(userId, comment.id, 0, 10);
-                // Merge replies and fetchedReplies, avoiding duplicates by id
-                const newReplies = (fetchedReplies.data || []).filter(
-                    reply => !replies.some(r => r.id === reply.id)
-                );
-                setReplies([...replies, ...newReplies]);
-            } catch (e) {
-                setReplies([]);
-            }
-            setLoadingReplies(false);
-        } else if (replyCount === 0) {
-            setReplies([]); // Clear replies when hiding
-        }
         setShowReplies(!showReplies);
+
+        if (showReplies && replies.length === 0) {
+            await fetchReplies();
+        }
     };
 
     const handleReply = async (replyText) => {
         try {
             const resp = await createComment(comment.post_id, userId, comment.id, replyText);
-            console.log("New reply created:", resp);
             if (resp && resp.success) {
-                console.log("Adding reply to state:", resp.data);
                 setReplyCount(replyCount + 1);
                 setReplies([resp.data, ...replies]);
+                setVisibleReplyCount(visibleReplyCount + 1);
                 if (!showReplies) {
-                    handleShowReplies();
+                    setShowReplies(true);
                 }
             }
         } catch (error) {
@@ -93,9 +104,20 @@ const Comment = ({ userId, comment }) => {
                         {loadingReplies ? (
                             <div className="text-gray-400 text-sm">Loading replies...</div>
                         ) : (
-                            replies.map(reply => (
-                                <Comment key={reply.id} comment={reply} userId={userId} />
-                            ))
+                            <>
+                                {replies.map(reply => (
+                                    <Comment key={reply.id} comment={reply} userId={userId} />
+                                ))}
+                                {replyCount > replies.length && (
+                                    <button
+                                        className="mt-2 text-blue-600 hover:underline text-xs"
+                                        onClick={fetchReplies}
+                                        disabled={loadingReplies}
+                                    >
+                                        Show more replies ({replyCount - visibleReplyCount})
+                                    </button>
+                                )}
+                            </>
                         )}
                     </div>
                 )}
@@ -108,47 +130,48 @@ function CommentList({ userId, post }) {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showAll, setShowAll] = useState(false);
+    const [commentCount, setCommentCount] = useState(post.comment_count || 0);
+    const [visibleCommentCount, setVisibleCommentCount] = useState(0);
 
-    useEffect(() => {
-        const fetchComments = async () => {
-            setLoading(true);
-            try {
-                const response = await getUserPostComments(userId, post.id, 0, 2);
-                if (response && response.success) {
-                    setComments(response.data || []);
-                } else {
-                    setComments([]);
-                    if (response && response.message) {
-                        console.error("Failed to fetch comments:", response.message);
-                    }
-                }
-            } catch (error) {
-                setComments([]);
-                console.error("Error fetching comments:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchComments();
-    }, [userId, post.id]);
-
-    const handleShowMore = async () => {
+    const fetchComments = async (offset = 0, limit = 2) => {
         setLoading(true);
         try {
-            const response = await getUserPostComments(userId, post.id, comments.length, 8);
+            const response = await getUserPostComments(userId, post.id, offset, limit);
             if (response && response.success) {
-                setComments([...comments, ...(response.data || [])]);
+                // Filter out duplicates
+                const newComments = (response.data || []).filter(
+                    c => !comments.some(existing => existing.id === c.id)
+                );
+                setComments(offset === 0 ? newComments : [...comments, ...newComments]);
+                setVisibleCommentCount(offset === 0 ? newComments.length : comments.length + newComments.length);
             } else {
+                if (offset === 0) setComments([]);
                 if (response && response.message) {
-                    console.error("Failed to fetch more comments:", response.message);
+                    console.error("Failed to fetch comments:", response.message);
                 }
             }
         } catch (error) {
-            console.error("Error fetching more comments:", error);
+            if (offset === 0) setComments([]);
+            console.error("Error fetching comments:", error);
         } finally {
             setLoading(false);
-            setShowAll(true);
         }
+    };
+
+    useEffect(() => {
+        setCommentCount(post.comment_count || 0);
+        fetchComments(0, 2);
+    }, [userId, post.id, post.comment_count]);
+
+    const handleShowMore = async () => {
+        await fetchComments(comments.length, 8);
+        setShowAll(comments.length + 8 >= commentCount);
+    };
+
+    const handleNewComment = (newComment) => {
+        setComments([newComment, ...comments]);
+        setCommentCount(commentCount + 1);
+        setVisibleCommentCount(visibleCommentCount + 1);
     };
 
     return (
@@ -160,13 +183,13 @@ function CommentList({ userId, post }) {
             {comments.map(comment => (
                 <Comment key={comment.id} comment={comment} userId={userId} />
             ))}
-            {!showAll && post.comment_count > 2 && comments.length > 0 && (
+            {!showAll && commentCount > comments.length && comments.length > 0 && (
                 <button
                     className="mt-2 text-blue-600 hover:underline text-sm"
                     onClick={handleShowMore}
                     disabled={loading}
                 >
-                    Show more comments ({post.comment_count - 2})
+                    Show more comments ({commentCount - comments.length})
                 </button>
             )}
         </div>
