@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { search } from "../../api/api";
-import { Search01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+// import { Search01Icon } from "@hugeicons/core-free-icons";
+// import { HugeiconsIcon } from "@hugeicons/react";
 
 function Filter({ selectedOptions, setSelectedOptions, userId }) {
   const dropdownOptions = ["Users", "Organizations", "Posts", "Events"];
@@ -86,10 +86,10 @@ function Search({ userId }) {
         type="submit"
         className="px-4 py-2 bg-white-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
       >
-        <HugeiconsIcon
+        {/* <HugeiconsIcon
           icon={Search01Icon}
           className="text-black hover:text-white transition-colors duration-200"
-        />
+        /> */}
       </button>
 
       <Filter

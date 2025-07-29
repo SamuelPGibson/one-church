@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function LandingPage() {
     return (
-        <main className="min-h-screen flex items-center justify-center bg-indigo-600 text-white px-4">
+        <main className="min-h-screen flex items-center justify-center bg-white text-black px-4">
             <div className="text-center bg-white/10 p-10 rounded-2xl shadow-xl backdrop-blur-md">
                 <h1 className="text-4xl font-bold mb-4">Welcome to OneChurch</h1>
                 <p className="text-lg mb-8 max-w-md mx-auto">

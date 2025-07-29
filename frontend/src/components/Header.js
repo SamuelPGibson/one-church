@@ -12,7 +12,7 @@ function Header() {
     }
 
     return (
-        <header className="bg-indigo-600 text-white shadow-md">
+        <header className="bg-white text-black shadow-md">
             <div className="container mx-auto flex items-center justify-between p-4">
                 {/* Logo */}
                 <Link to="/" className="text-2xl font-bold">

@@ -1,5 +1,8 @@
 
 const CreatePost = ({ userId }) => {
+
+
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start py-12 px-4">
             <header className="w-full max-w-2xl mb-8">
