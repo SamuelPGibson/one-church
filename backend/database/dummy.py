@@ -31,6 +31,8 @@ class DummyDatabase(Database):
 
     def __create_dummy_data(self):
         ''' Create some dummy data for testing '''
+        self._account_id = 3
+        self._post_id = 3
         self.users = [
             {"id": 1, "username": "user1", "password": "pass1", "pfp_url": "https://cw39.com/wp-content/uploads/sites/10/2016/01/s036012017.jpg"},
             {"id": 2, "username": "user2", "password": "pass2", "pfp_url": "https://helloartsy.com/wp-content/uploads/kids/farm-animals/how-to-draw-a-cow-face/how-to-draw-a-cow-face-step-6.jpg"}
@@ -41,7 +43,7 @@ class DummyDatabase(Database):
         ]
         self.posts = [
             {"id": 1, "author_id": 1,
-             "caption": "This is the caption of the first every post on OneChurch! All for the glory of God!",
+             "caption": "This is the caption of the first ever post on OneChurch! All for the glory of God!",
              "timestamp": "2023-10-01T10:00:00Z",
              "image_url": "https://t3.ftcdn.net/jpg/02/76/44/92/360_F_276449235_z71XmvtwDHfqxNt6UCK5yl4mAplD3cds.jpg",
              "location": "Saskatoon", "type": "post"},
@@ -63,7 +65,16 @@ class DummyDatabase(Database):
             {"id": 1, "post_id": 1, "parent_id": 0, "author_id": 2, "content": "Comment on post by user1"},
             {"id": 3, "post_id": 1, "parent_id": 0, "author_id": 2, "content": "Another comment on post by user1"},
             {"id": 4, "post_id": 1, "parent_id": 0, "author_id": 2, "content": "3rd comment on post by user1"},
+            {"id": 5, "post_id": 1, "parent_id": 3, "author_id": 1, "content": "user2 replies to comment by user1"},
             {"id": 2, "post_id": 2, "parent_id": 0, "author_id": 1, "content": "Comment on post by user2"}
+        ]
+        self.likes = [
+            {"post_id": 1, "user_id": 2},
+            {"post_id": 2, "user_id": 1}
+        ]
+        self.going_events = [
+            {"event_id": 3, "user_id": 1},
+            {"event_id": 4, "user_id": 2}
         ]
 
     # Tests
@@ -657,7 +668,8 @@ class DummyDatabase(Database):
         return {
             "success": True,
             "message": "Comment created successfully",
-            "id": comment["id"]
+            "id": comment["id"],
+            "data": self.get_comment(comment["id"])["data"]
         }
 
     def delete_comment(self, comment_id: int) -> dict:
@@ -689,6 +701,14 @@ class DummyDatabase(Database):
     def get_comment(self, comment_id: int) -> dict:
         for comment in self.comments:
             if comment["id"] == comment_id:
+                comment['author_name'], comment['author_pfp'] = self._get_user_name_pfp(comment['author_id'])
+                like_user_ids = [x['user_id'] for x in self.likes if x['post_id'] == comment['post_id']]
+                dislike_user_ids = [x['user_id'] for x in self.dislikes if x['post_id'] == comment['post_id']]
+                comment['like_count'] = len(like_user_ids)
+                comment['dislike_count'] = len(dislike_user_ids)
+                comment['user_liked'] = comment['author_id'] in like_user_ids
+                comment['user_disliked'] = comment['author_id'] in dislike_user_ids
+                comment['reply_count'] = len([x for x in self.comments if x['parent_id'] == comment['id']])
                 return {
                     "success": True,
                     "data": comment
@@ -802,7 +822,6 @@ class DummyDatabase(Database):
             comment['user_liked'] = user_id in like_user_ids
             comment['user_disliked'] = user_id in dislike_user_ids
             comment['reply_count'] = len([x for x in self.comments if x['parent_id'] == comment['id']])
-        print(comments)
         return {
             "success": True,
             "message": "Comments retrieved successfully",
@@ -837,8 +856,15 @@ class DummyDatabase(Database):
             item['dislike_count'] = len(dislike_user_ids)
             item['user_liked'] = user_id in like_user_ids
             item['user_disliked'] = user_id in dislike_user_ids
-            item['comment_count'] = len([x for x in self.comments if x['post_id'] == item['id']])
+            item['comment_count'] = len([x for x in self.comments if x['post_id'] == item['id'] and x['parent_id'] == 0])
             item['comments'] = self.get_comments(user_id, item['id'], 0, 2)['data'] if item['type'] == 'post' else []
+            if item['type'] == 'event':
+                going_user_ids = [x['user_id'] for x in self.going_events if x['event_id'] == item['id']]
+                interested_user_ids = [x['user_id'] for x in self.interested_events if x['event_id'] == item['id']]
+                item['going_count'] = len(going_user_ids)
+                item['interested_count'] = len(interested_user_ids)
+                item['user_going'] = user_id in going_user_ids
+                item['user_interested'] = user_id in interested_user_ids
         return {
             "success": True,
             "message": "User feed retrieved successfully",

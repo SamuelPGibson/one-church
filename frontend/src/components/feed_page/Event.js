@@ -1,5 +1,38 @@
 import React, { useState } from 'react';
-import { Comment } from './Comment';
+import CommentList from './Comment';
+import { EventActionBar } from './ActionBar';
+
+function EventHeader({ userId, event }) {
+    return (
+        <div className="flex items-center gap-4 mb-4">
+            {/* Author profile picture */}
+            <img
+                src={event.author_pfp || "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg"}
+                alt="Author"
+                className="w-12 h-12 rounded-full object-cover"
+            />
+            {/* Info column */}
+            <div className="flex-1 min-w-0">
+                <div className="font-semibold text-gray-800 truncate">{event.author_name || "Author"}</div>
+                <div className="text-sm text-gray-500">
+                    {event.start_time && (
+                        <span>Start: {new Date(event.start_time).toLocaleString()}</span>
+                    )}
+                    {event.end_time && (
+                        <span> &middot; End: {new Date(event.end_time).toLocaleString()}</span>
+                    )}
+                    {event.location && (
+                        <span> &middot; {event.location}</span>
+                    )}
+                </div>
+            </div>
+            {/* Follow button */}
+            <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                Follow
+            </button>
+        </div>
+    );
+}
 
 // Event component displays event details and attendees
 function Event({ userId, event }) {
@@ -10,61 +43,37 @@ function Event({ userId, event }) {
     const attendees = event.attendees || [];
 
     return (
-        <div className="event bg-white rounded-lg shadow-md p-6 mb-6">
-            {/* Event header with author info */}
-            <div className="event-header flex items-center mb-4">
-                <span className="text-gray-700 font-semibold">Author: {event.authorId}</span>
-            </div>
-            {/* Event main content */}
+        <div className="event bg-blue-50 rounded-lg shadow-lg p-6 mb-6">
+            <EventHeader userId={userId} event={event} />
             <div className="event-body mb-4">
-                {/* Event image if available */}
-                {event.imageUrl && (
+                <p className="text-blue-900 mb-2">{event.description}</p>
+                {event.image_url && (
                     <img
-                        src={event.imageUrl}
-                        alt={event.title}
-                        className="w-full max-h-96 object-cover rounded-md mb-3"
+                        src={event.image_url}
+                        alt="Event"
+                        className="w-full max-h-96 object-cover rounded-md mb-3 border border-blue-200"
                     />
                 )}
-                {/* Event title */}
-                <h2 className="text-xl font-bold mb-2">{event.title}</h2>
-                {/* Event description */}
-                <p className="text-gray-800 mb-2">{event.description}</p>
-                {/* Event location */}
-                <span className="text-sm text-gray-500 block mb-1">
-                    Location: {event.location}
-                </span>
-                {/* Event start time */}
-                <span className="text-sm text-gray-500 block mb-1">
-                    Start: {new Date(event.startTime).toLocaleString()}
-                </span>
-                {/* Event end time */}
-                <span className="text-sm text-gray-500 block mb-1">
-                    End: {new Date(event.endTime).toLocaleString()}
-                </span>
             </div>
-            {/* Button to toggle attendee list */}
-            <button
-                onClick={() => setShowDetails(!showDetails)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition mb-3"
-            >
-                {showDetails ? 'Hide Attendees' : 'Show Attendees'}
-            </button>
-            {/* Attendee list, shown if showDetails is true */}
-            {showDetails && (
-                <div className="event-attendees mt-4 border-t pt-4">
-                    {attendees.length === 0 ? (
-                        // Message if no attendees
-                        <p className="text-gray-500 italic">No attendees yet.</p>
-                    ) : (
-                        // List of attendees
-                        attendees.map((attendeeId) => (
-                            <div key={attendeeId} className="text-gray-700">
-                                Attendee: {attendeeId}
-                            </div>
-                        ))
-                    )}
-                </div>
-            )}
+            <EventActionBar userId={userId} event={event} />
+            {/* <div className="mb-4">
+                <button
+                    className="text-blue-700 hover:underline text-sm"
+                    onClick={() => setShowDetails(!showDetails)}
+                >
+                    {showDetails ? "Hide Attendees" : `Show Attendees (${attendees.length})`}
+                </button>
+                {showDetails && (
+                    <ul className="mt-2">
+                        {attendees.map((attendee, idx) => (
+                            <li key={idx} className="text-blue-800 text-sm">
+                                {attendee.name || attendee}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div> */}
+            <CommentList userId={userId} post={event} />
         </div>
     );
 }

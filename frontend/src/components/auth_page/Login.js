@@ -16,16 +16,13 @@ export default function Login({ setUserId }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const result = await loginUser({
-            username: formData.username,
-            password: formData.password
-        });
-    
+        const result = await loginUser(formData.username, formData.password);
         if (result.error) {
             alert(result.error);
         } else {
             setUserId(result.id);
             console.log("User Logged in: ", result.id);
+            navigate("/feed");
         }
     };
 

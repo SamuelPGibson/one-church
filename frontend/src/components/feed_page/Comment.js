@@ -1,119 +1,63 @@
 
-import { getUserPostComments, getUserCommentReplies, createComment, like, dislike, removeLike, removeDislike } from '../../api/api';
+import { getUserPostComments, getUserCommentReplies, createComment, getComment, like, dislike, removeLike, removeDislike } from '../../api/api';
+import { CommentActionBar } from './ActionBar';
 import React, { useState, useEffect } from 'react';
 
-
-function CommentActionBar({ userId, comment, onReply }) {
-    const [likeState, setLikeState] = useState(comment.user_liked || false);
-    const [dislikeState, setDislikeState] = useState(comment.user_disliked || false);
-    const [replyOpen, setReplyOpen] = useState(false);
-    const [replyValue, setReplyValue] = useState('');
-
-    const handleLike = () => {
-        if (!likeState) {
-            setLikeState(true);
-            like(comment.id, userId).catch(() => {
-                setLikeState(false);
-            });
-        }
-    };
-
-    const handleDislike = () => {
-        if (!dislikeState) {
-            setDislikeState(true);
-            dislike(comment.id, userId).catch(() => {
-                setDislikeState(false);
-            });
-        }
-    };
-
-    const handleReplyClick = () => {
-        setReplyOpen(!replyOpen);
-    };
-
-    const handleSendReply = () => {
-        if (onReply && replyValue.trim()) {
-            onReply(replyValue);
-            setReplyValue('');
-            setReplyOpen(false);
-        }
-    };
-
-    return (
-        <>
-            <div className="flex items-center gap-6 mb-2">
-                <button
-                    className={`flex items-center gap-1 px-2 py-1 rounded ${likeState ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'}`}
-                    onClick={handleLike}
-                    aria-label="Like"
-                    disabled={likeState}
-                >
-                    <span role="img" aria-label="like">👍</span>
-                    {comment.like_count + (likeState && !comment.user_liked ? 1 : 0)}
-                </button>
-                <button
-                    className={`flex items-center gap-1 px-2 py-1 rounded ${dislikeState ? 'bg-red-100 text-red-600' : 'hover:bg-gray-100'}`}
-                    onClick={handleDislike}
-                    aria-label="Dislike"
-                    disabled={dislikeState}
-                >
-                    <span role="img" aria-label="dislike">👎</span>
-                    {comment.dislike_count + (dislikeState && !comment.user_disliked ? 1 : 0)}
-                </button>
-                <button
-                    className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100"
-                    onClick={handleReplyClick}
-                    aria-label="Reply"
-                >
-                    <span role="img" aria-label="reply">💬</span>
-                    Reply{typeof comment.reply_count === 'number' ? ` (${comment.reply_count})` : ''}
-                </button>
-            </div>
-            {replyOpen && (
-                <div className="w-full mb-2 flex gap-2">
-                    <input
-                        type="text"
-                        placeholder="Write a reply..."
-                        className="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring"
-                        value={replyValue}
-                        onChange={e => setReplyValue(e.target.value)}
-                    />
-                    <button
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
-                        onClick={handleSendReply}
-                    >
-                        Send
-                    </button>
-                </div>
-            )}
-        </>
-    );
-}
 
 const Comment = ({ userId, comment }) => {
     const [showReplies, setShowReplies] = useState(false);
     const [replies, setReplies] = useState([]);
     const [loadingReplies, setLoadingReplies] = useState(false);
+    const [replyCount, setReplyCount] = useState(comment.reply_count || 0);
+    const [visibleReplyCount, setVisibleReplyCount] = useState(0);
 
-    const handleShowReplies = async () => {
-        if (!showReplies && comment.reply_count > 0) {
+    const fetchReplies = async () => {
+        if (replyCount === replies.length) {
+            return;
+        }
+        if (replies.length === 0) {
             setLoadingReplies(true);
-            try {
-                const fetchedReplies = await getUserCommentReplies(userId, comment.id);
-                setReplies(fetchedReplies || []);
-            } catch (e) {
-                setReplies([]);
-            }
+        }
+        try {
+            // If the user makes a new reply, which is appended to server list
+            // the backend might return that reply, not knowing it is already displayed
+            const fetchedReplies = await getUserCommentReplies(userId, comment.id, replies.length, 8);
+            const newReplies = (fetchedReplies.data || []).filter(
+                reply => !replies.some(r => r.id === reply.id)
+            );
+            setReplies([...replies, ...newReplies]);
+            setVisibleReplyCount(replies.length);
+        } catch (e) {
+            // Optionally handle error
+            console.error("Error fetching replies:", e);
+        }
+        if (loadingReplies) {
             setLoadingReplies(false);
         }
-        setShowReplies(!showReplies);
     };
 
-    const handleReply = (replyText) => {
-        createComment({ postId: comment.post_id, authorId: userId, parent_id: comment.id, content: replyText })
-            .then(newReply => {
-                setReplies([...(replies || []), newReply]);
-            });
+    const handleShowReplies = async () => {
+        setShowReplies(!showReplies);
+
+        if (showReplies && replies.length === 0) {
+            await fetchReplies();
+        }
+    };
+
+    const handleReply = async (replyText) => {
+        try {
+            const resp = await createComment(comment.post_id, userId, comment.id, replyText);
+            if (resp && resp.success) {
+                setReplyCount(replyCount + 1);
+                setReplies([resp.data, ...replies]);
+                setVisibleReplyCount(visibleReplyCount + 1);
+                if (!showReplies) {
+                    setShowReplies(true);
+                }
+            }
+        } catch (error) {
+            console.error("Error creating reply:", error);
+        }
     };
 
     return (
@@ -141,16 +85,17 @@ const Comment = ({ userId, comment }) => {
                 <CommentActionBar
                     userId={userId}
                     comment={comment}
+                    replyCount={replyCount}
                     onReply={handleReply}
                 />
                 {/* Show replies button if there are replies */}
-                {comment.reply_count > 0 && (
+                {replyCount > 0 && (
                     <button
                         className="mt-2 text-blue-600 hover:underline text-sm self-start"
                         onClick={handleShowReplies}
                         disabled={loadingReplies}
                     >
-                        {showReplies ? 'Hide Replies' : `Show Replies (${comment.reply_count})`}
+                        {showReplies ? 'Hide Replies' : `Show Replies (${replyCount})`}
                     </button>
                 )}
                 {/* Replies */}
@@ -159,9 +104,20 @@ const Comment = ({ userId, comment }) => {
                         {loadingReplies ? (
                             <div className="text-gray-400 text-sm">Loading replies...</div>
                         ) : (
-                            replies.map(reply => (
-                                <Comment key={reply.id} comment={reply} userId={userId} />
-                            ))
+                            <>
+                                {replies.map(reply => (
+                                    <Comment key={reply.id} comment={reply} userId={userId} />
+                                ))}
+                                {replyCount > replies.length && (
+                                    <button
+                                        className="mt-2 text-blue-600 hover:underline text-xs"
+                                        onClick={fetchReplies}
+                                        disabled={loadingReplies}
+                                    >
+                                        Show more replies ({replyCount - visibleReplyCount})
+                                    </button>
+                                )}
+                            </>
                         )}
                     </div>
                 )}
@@ -174,47 +130,48 @@ function CommentList({ userId, post }) {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showAll, setShowAll] = useState(false);
+    const [commentCount, setCommentCount] = useState(post.comment_count || 0);
+    const [visibleCommentCount, setVisibleCommentCount] = useState(0);
 
-    useEffect(() => {
-        const fetchComments = async () => {
-            setLoading(true);
-            try {
-                const response = await getUserPostComments(userId, post.id, 0, 2);
-                if (response && response.success) {
-                    setComments(response.data || []);
-                } else {
-                    setComments([]);
-                    if (response && response.message) {
-                        console.error("Failed to fetch comments:", response.message);
-                    }
-                }
-            } catch (error) {
-                setComments([]);
-                console.error("Error fetching comments:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchComments();
-    }, [userId, post.id]);
-
-    const handleShowMore = async () => {
+    const fetchComments = async (offset = 0, limit = 2) => {
         setLoading(true);
         try {
-            const response = await getUserPostComments(userId, post.id, comments.length, 8);
+            const response = await getUserPostComments(userId, post.id, offset, limit);
             if (response && response.success) {
-                setComments([...comments, ...(response.data || [])]);
+                // Filter out duplicates
+                const newComments = (response.data || []).filter(
+                    c => !comments.some(existing => existing.id === c.id)
+                );
+                setComments(offset === 0 ? newComments : [...comments, ...newComments]);
+                setVisibleCommentCount(offset === 0 ? newComments.length : comments.length + newComments.length);
             } else {
+                if (offset === 0) setComments([]);
                 if (response && response.message) {
-                    console.error("Failed to fetch more comments:", response.message);
+                    console.error("Failed to fetch comments:", response.message);
                 }
             }
         } catch (error) {
-            console.error("Error fetching more comments:", error);
+            if (offset === 0) setComments([]);
+            console.error("Error fetching comments:", error);
         } finally {
             setLoading(false);
-            setShowAll(true);
         }
+    };
+
+    useEffect(() => {
+        setCommentCount(post.comment_count || 0);
+        fetchComments(0, 2);
+    }, [userId, post.id, post.comment_count]);
+
+    const handleShowMore = async () => {
+        await fetchComments(comments.length, 8);
+        setShowAll(comments.length + 8 >= commentCount);
+    };
+
+    const handleNewComment = (newComment) => {
+        setComments([newComment, ...comments]);
+        setCommentCount(commentCount + 1);
+        setVisibleCommentCount(visibleCommentCount + 1);
     };
 
     return (
@@ -226,13 +183,13 @@ function CommentList({ userId, post }) {
             {comments.map(comment => (
                 <Comment key={comment.id} comment={comment} userId={userId} />
             ))}
-            {!showAll && post.comment_count > 2 && comments.length > 0 && (
+            {!showAll && commentCount > comments.length && comments.length > 0 && (
                 <button
                     className="mt-2 text-blue-600 hover:underline text-sm"
                     onClick={handleShowMore}
                     disabled={loading}
                 >
-                    Show more comments ({post.comment_count - 2})
+                    Show more comments ({commentCount - comments.length})
                 </button>
             )}
         </div>
