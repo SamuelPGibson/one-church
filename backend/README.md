@@ -6,6 +6,12 @@
 
 To run with dummy database, change `db` definition in `backend/api/views.py`
 
+## Python Download
+
+Download [Python](https://www.python.org/downloads/)
+
+* Must be version 3.12 or higher
+
 ## PostgreSQL Setup (not needed for DummyDatabase configuration)
 
 Download [PostgreSQL](https://www.postgresql.org/download/)
@@ -26,6 +32,8 @@ Connect to PostgreSQL
 psql -U postgres
 ```
 
+* May need to open command prompt as administrator, go to postgreSQL bin directory and run this command there instead - if it asks for password
+
 Create database (don't run again)
 
 ```cmd
@@ -42,6 +50,29 @@ Connect to database
 
 ```cmd
 \c one_church_db
+```
+
+## Redis Setup
+
+Download [Redis](https://github.com/redis-windows/redis-windows/releases) version 8
+
+* Port 6379
+
+### May need to use WSL (Only if above fails)
+
+Install wsl - windows subsystem for linux
+
+```cmd
+wsl --install
+```
+
+* UNIX username: assembly-admin
+* password: assembly
+
+```cmd
+sudo apt update
+sudo apt install redis
+redis-server
 ```
 
 ## Running the Backend
@@ -88,7 +119,7 @@ python manage.py createsuperuser
 Run the development server
 
 ```cmd
-python manage.py runserver
+python run_server.py
 ```
 
 The output should be something like:
