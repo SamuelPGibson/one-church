@@ -1,7 +1,8 @@
 
 import { getUserPostComments, getUserCommentReplies, createComment, getComment, like, dislike, removeLike, removeDislike } from '../../api/api';
 import { CommentActionBar } from './ActionBar';
-import React, { useState, useEffect } from 'react';
+import { useWebSocket } from '../../hooks/useWebSocket';
+import React, { useState, useEffect, useCallback } from 'react';
 
 
 const Comment = ({ userId, comment }) => {
@@ -10,6 +11,17 @@ const Comment = ({ userId, comment }) => {
     const [loadingReplies, setLoadingReplies] = useState(false);
     const [replyCount, setReplyCount] = useState(comment.reply_count || 0);
     const [visibleReplyCount, setVisibleReplyCount] = useState(0);
+
+    const handleIncomingMessage = useCallback((data) => {
+        console.log("Received message:", data);
+        if (data.type === 'new_comment') {
+          //setComments((prev) => [...prev, data.comment]);
+        }
+      }, []);
+
+    // for HTTPS use wss://
+    useWebSocket(`ws://localhost:8000/ws/replies/${comment.id}/`, handleIncomingMessage);
+
 
     const fetchReplies = async () => {
         if (replyCount === replies.length) {
