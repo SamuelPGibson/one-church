@@ -2,8 +2,13 @@
 Functions for handling API requests
 '''
 
+# Django endpoints
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
+
+# Websocket
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from typing import Any
 import json
@@ -279,6 +284,7 @@ def create_post(request: HttpRequest) -> JsonResponse:
                 data["image_url"],
                 data.get("location")
             )
+            # TODO: Send to websocket
             return JsonResponse(result, status=get_status_code(result))
         except (KeyError, json.JSONDecodeError):
             return JsonResponse({"error": "Invalid input"}, status=400)
@@ -396,6 +402,25 @@ def create_comment(request: HttpRequest) -> JsonResponse:
                 data["author_id"],
                 data["content"]
             )
+
+            if data['parent_id'] == 0:
+                group_name = f"comments_{data['post_id']}"
+                broadcast_type = "send_comment"
+            else:
+                group_name = f"replies_{data['parent_id']}"
+                broadcast_type = "send_reply"
+
+            # TODO: Send to websocket
+            print("Sending to websocket", group_name, result)
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                group_name,
+                {
+                    "type": broadcast_type,
+                    "comment": result['data']
+                }
+            )
+
             return JsonResponse(result, status=get_status_code(result))
         except (KeyError, json.JSONDecodeError):
             return JsonResponse({"error": "Invalid input"}, status=400)

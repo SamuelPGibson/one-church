@@ -829,6 +829,7 @@ class Database(ABC):
                             'success' is True if comment creation is successful, otherwise False.
                             'id' is the ID of the newly created comment if successful.
                             'message' contains additional information about the result.
+                            'data' contains the comment information if successful.
         '''
 
     @abstractmethod
