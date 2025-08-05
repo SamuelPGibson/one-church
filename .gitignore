@@ -2,14 +2,20 @@
 __pycache__/
 
 # Personal notepad
-notes.md
-env.bat
-venv/
+notes/
 
+# Configuration files
+.vscode/
+
+# Local utilities
+env.bat
+
+# Virtual environments
+venv/
 backend/venv/
 one_church/lib/
-frontend/node_modules/
-
 one_church/venv/
-
 one_church/
+
+# Node modules
+frontend/node_modules/
