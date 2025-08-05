@@ -1,6 +1,7 @@
 import CommentList from './Comment';
 import { PostActionBar } from './ActionBar'; // must have {} for non-default exports
 import React, { useState } from 'react';
+import UserLink from '../UserLink';
 
 /**
  * Post structure:
@@ -17,14 +18,21 @@ function PostHeader({ userId, post }) {
     return (
         <div className="flex items-center gap-4">
             {/* Author profile picture */}
-            <img
-                src={post.author_pfp || "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg"}
-                alt="Author"
-                className="w-12 h-12 rounded-full object-cover"
+            <UserLink 
+                userId={post.author_id} 
+                showProfilePic={true}
+                profilePicUrl={post.author_pfp || "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg"}
+                profilePicSize="w-12 h-12"
+                className="flex-shrink-0"
             />
             {/* Info column (expands) */}
             <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-800 truncate">{post.author_name || "Author"}</div>
+                <UserLink 
+                    userId={post.author_id}
+                    className="font-semibold text-gray-800 truncate hover:text-indigo-600"
+                >
+                    {post.author_name || "Author"}
+                </UserLink>
                 <div className="text-sm text-gray-500">
                     {post.timestamp && (
                         <span>{new Date(post.timestamp).toLocaleString()}</span>

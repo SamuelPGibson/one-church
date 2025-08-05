@@ -16,7 +16,7 @@ export default function Post({postId}) {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header name={username} profile_image_url={""}/>
+      <Header name={username} profile_image_url={""} userId={postRes['author_id']}/>
       <div className="flex-grow">
         <main className="max-w-3xl mx-auto p-6">
           <h1 className="text-3xl font-bold text-indigo-700 mb-6">

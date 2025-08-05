@@ -60,13 +60,12 @@ class Database(ABC):
 
     # User Account
     @abstractmethod
-    def create_user(self, username: str, password: str) -> dict:
+    def create_user(self, user_info: dict) -> dict:
         '''
         Purpose:
             Create a new user account with the given username and password.
         Pre-conditions:
-            :param username: The desired username for the new user
-            :param password: The desired password for the new user
+            :param user_info: A dictionary containing the user information
         Post-conditions:
             (none)
         Returns:
@@ -111,13 +110,13 @@ class Database(ABC):
         '''
 
     @abstractmethod
-    def update_user(self, user_id: int, username: str) -> dict:
+    def update_user(self, user_id: int, user_info: dict) -> dict:
         '''
         Purpose:
             Update user information for a given user ID.
         Pre-conditions:
             :param user_id: The ID of the user to update
-            :param username: The new username for the user
+            :param user_info: A dictionary containing the user information
         Post-conditions:
             (none)
         Returns:

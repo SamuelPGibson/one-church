@@ -48,6 +48,7 @@ function App() {
                         <Route path="/create-event" element={<CreateEvent userId={userId} />} />
                         <Route path="/messaging" element={<MessagingPage userId={userId} />} />
                         <Route path="/profile" element={<ProfilePage userId={userId} />} />
+                        <Route path="/profile/:profileUserId" element={<ProfilePage userId={userId} />} />
                     </Routes>
                 </div>
 

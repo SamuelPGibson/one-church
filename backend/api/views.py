@@ -61,7 +61,7 @@ def create_user(request: HttpRequest) -> JsonResponse:
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            result = db.create_user(data["username"], data["password"])
+            result = db.create_user(data)
             return JsonResponse(result, status=get_status_code(result))
         except (KeyError, json.JSONDecodeError):
             return JsonResponse({"error": "Invalid input"}, status=400)
@@ -90,7 +90,7 @@ def update_user(request: HttpRequest, user_id: int) -> JsonResponse:
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            result = db.update_user(user_id, data["username"])
+            result = db.update_user(user_id, data)
             return JsonResponse(result, status=get_status_code(result))
         except (KeyError, json.JSONDecodeError):
             return JsonResponse({"error": "Invalid input"}, status=400)

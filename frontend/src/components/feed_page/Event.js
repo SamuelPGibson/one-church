@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import CommentList from './Comment';
 import { EventActionBar } from './ActionBar';
+import UserLink from '../UserLink';
 
 function EventHeader({ userId, event }) {
     return (
         <div className="flex items-center gap-4 mb-4">
             {/* Author profile picture */}
-            <img
-                src={event.author_pfp || "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg"}
-                alt="Author"
-                className="w-12 h-12 rounded-full object-cover"
+            <UserLink 
+                userId={event.author_id} 
+                showProfilePic={true}
+                profilePicUrl={event.author_pfp || "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg"}
+                profilePicSize="w-12 h-12"
+                className="flex-shrink-0"
             />
             {/* Info column */}
             <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-800 truncate">{event.author_name || "Author"}</div>
+                <UserLink 
+                    userId={event.author_id}
+                    className="font-semibold text-gray-800 truncate hover:text-indigo-600"
+                >
+                    {event.author_name || "Author"}
+                </UserLink>
                 <div className="text-sm text-gray-500">
                     {event.start_time && (
                         <span>Start: {new Date(event.start_time).toLocaleString()}</span>

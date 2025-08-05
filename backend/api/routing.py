@@ -1,4 +1,6 @@
-# api/routing.py
+'''
+Websocket routing
+'''
 
 from django.urls import re_path
 from .consumers import CommentConsumer, ReplyConsumer

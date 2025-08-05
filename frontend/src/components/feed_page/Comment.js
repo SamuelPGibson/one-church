@@ -3,7 +3,7 @@ import { getUserPostComments, getUserCommentReplies, createComment, getComment, 
 import { CommentActionBar } from './ActionBar';
 import { useWebSocket } from '../../hooks/useWebSocket';
 import React, { useState, useEffect, useCallback } from 'react';
-
+import UserLink from '../UserLink';
 
 const Comment = ({ userId, user, comment }) => {
     const [showReplies, setShowReplies] = useState(false);
@@ -86,17 +86,23 @@ const Comment = ({ userId, user, comment }) => {
         <div className="flex border border-gray-300 rounded-md my-2 p-4 bg-white shadow-sm">
             {/* Left: Author profile picture */}
             <div className="flex-shrink-0 mr-4">
-                <img
-                    src={comment.author_pfp || '/default-profile.png'}
-                    alt="Profile"
-                    className="w-12 h-12 rounded-full object-cover"
+                <UserLink 
+                    userId={comment.author_id} 
+                    showProfilePic={true}
+                    profilePicUrl={comment.author_pfp || '/default-profile.png'}
+                    profilePicSize="w-12 h-12"
                 />
             </div>
             {/* Right: Content */}
             <div className="flex-1 flex flex-col">
                 {/* Row 1: Author name and timestamp */}
                 <div className="flex items-center gap-2 mb-1 text-sm text-gray-600">
-                    <span className="font-semibold">{comment.author_name || "Author" }</span>
+                    <UserLink 
+                        userId={comment.author_id}
+                        className="font-semibold hover:text-indigo-600"
+                    >
+                        {comment.author_name || "Author"}
+                    </UserLink>
                     <span className="text-xs text-gray-400">
                         {comment.created_at ? new Date(comment.created_at).toLocaleString() : ''}
                     </span>

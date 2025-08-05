@@ -107,20 +107,16 @@ class DummyDatabase(Database):
         }
 
     # User Account
-    def create_user(self, username: str, password: str) -> dict:
-        print(f"Creating user: {username} with password: {password}")
+    def create_user(self, user_info: dict) -> dict:
+        print(f"Creating user: {user_info}")
         for user in self.users:
-            if user["username"] == username:
+            if user["username"] == user_info['username']:
                 return {
                     "success": False,
                     "message": "Username already taken"
                 }
 
-        user = {
-            "id": self._account_id,
-            "username": username,
-            "password": password
-        }
+        user = {"id": self._account_id, **user_info}
         self._account_id += 1
         self.users.append(user)
         return {
@@ -155,10 +151,10 @@ class DummyDatabase(Database):
             "message": "User not found"
         }
 
-    def update_user(self, user_id: int, username: str) -> dict:
+    def update_user(self, user_id: int, user_info: dict) -> dict:
         for user in self.users:
             if user['id'] == user_id:
-                user['username'] = username
+                user.update(user_info)
                 return {
                     "success": True,
                     "message": "User updated successfully"
@@ -171,6 +167,7 @@ class DummyDatabase(Database):
     def get_user(self, user_id: int) -> dict:
         for user in self.users:
             if user['id'] == user_id:
+                user['type'] = 'user'
                 return {
                     "success": True,
                     "message": "User found",
@@ -271,6 +268,7 @@ class DummyDatabase(Database):
     def get_organization(self, org_id: int) -> dict:
         for org in self.organizations:
             if org['id'] == org_id:
+                org['type'] = 'organization'
                 return {
                     "success": True,
                     "message": "Organization found",

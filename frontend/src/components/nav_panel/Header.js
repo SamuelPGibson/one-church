@@ -15,7 +15,7 @@ function Header({ userId, user, setUserId }) {
             <div className="container mx-auto flex items-center justify-between p-4">
                 {/* Logo */}
                 <Link to="/" className="text-2xl font-bold">
-                    OneChurch
+                    Assembly
                 </Link>
 
                 {/* Navigation */}
@@ -44,7 +44,6 @@ function Header({ userId, user, setUserId }) {
                         </div>
                     </div>
                     <Link to="/messaging" className="hover:text-indigo-300 transition">Messaging</Link>
-                    <Link to="/profile" className="hover:text-indigo-300 transition">Profile</Link>
                 </nav>
 
                 {/* Auth Button */}
@@ -59,7 +58,7 @@ function Header({ userId, user, setUserId }) {
                         </button>
                         <div className="absolute right-0 mt-2 w-40 bg-white text-indigo-600 rounded shadow-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity z-10">
                             <Link
-                                to="/profile"
+                                to={`/profile/${userId}`}
                                 className="block px-4 py-2 hover:bg-indigo-100 transition"
                             >
                                 Profile

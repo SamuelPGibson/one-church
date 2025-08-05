@@ -126,12 +126,12 @@ export async function userChangePassword(userId, newPassword, baseUrl = "") {
  * @param {string} username - The new username.
  * @returns {Promise<Object>} Result or error.
  */
-export async function updateUser(userId, username, baseUrl = "") {
+export async function updateUser(userId, userData, baseUrl = "") {
   try {
     const res = await fetch(`${baseUrl}/api/users/${userId}/update/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username }),
+      body: JSON.stringify(userData),
     });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to update user" };
