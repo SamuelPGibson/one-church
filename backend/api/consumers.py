@@ -107,9 +107,10 @@ class ReplyConsumer(AsyncWebsocketConsumer):
             logger.info(f"ReplyConsumer: Sending reply to group {self.group_name}")
             await self.send(text_data=json.dumps({
                 'type': 'new_reply',
-                'reply': event['reply'],
-                'user': event['user'],
-                'timestamp': event['timestamp'],
+                'reply': event.get('reply', {}),
+                'user': event.get('user', ''),
+                'timestamp': event.get('timestamp', ''),
+                'parent_id': self.parent_id
             }))
         except Exception as e:
             logger.error(f"ReplyConsumer send_reply error: {e}")

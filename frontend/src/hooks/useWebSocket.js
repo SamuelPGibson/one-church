@@ -6,29 +6,25 @@ export function useWebSocket(url, onMessage) {
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
   const reconnectDelay = 1000; // Start with 1 second
-  const initialDelay = 500; // Small delay before first connection attempt
+  const initialDelay = 100; // Small delay before first connection attempt
 
   const connect = useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       return;
     }
 
-    console.log(`Attempting to connect to WebSocket: ${url}`);
-    
     try {
       const socket = new WebSocket(url);
       socketRef.current = socket;
 
       socket.onopen = () => {
-        console.log("WebSocket connected successfully:", url);
         reconnectAttemptsRef.current = 0; // Reset reconnect attempts on successful connection
       };
 
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log("WebSocket message received:", data);
-          onMessage?.(data);
+          onMessage?.(data);  // Pass the parsed data, not the event
         } catch (error) {
           console.error("Error parsing WebSocket message:", error);
         }

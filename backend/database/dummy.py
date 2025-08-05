@@ -664,7 +664,7 @@ class DummyDatabase(Database):
             "author_id": author_id,
             "content": content
         }
-        self.comments.append(comment)
+        self.comments = [comment] + self.comments
         return {
             "success": True,
             "message": "Comment created successfully",

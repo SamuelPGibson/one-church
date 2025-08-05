@@ -403,23 +403,28 @@ def create_comment(request: HttpRequest) -> JsonResponse:
                 data["content"]
             )
 
-            if data['parent_id'] == 0:
-                group_name = f"comments_{data['post_id']}"
-                broadcast_type = "send_comment"
-            else:
-                group_name = f"replies_{data['parent_id']}"
-                broadcast_type = "send_reply"
-
-            # TODO: Send to websocket
-            print("Sending to websocket", group_name, result)
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                group_name,
-                {
-                    "type": broadcast_type,
-                    "comment": result['data']
-                }
-            )
+            if result['success']:
+                channel_layer = get_channel_layer()
+                if data['parent_id'] == 0:
+                    # This is a comment, not a reply
+                    async_to_sync(channel_layer.group_send)(
+                        f"comments_{data['post_id']}",
+                        {
+                            "type": "send_comment",
+                            "comment": result['data']
+                        }
+                    )
+                else:
+                    # This is a reply
+                    async_to_sync(channel_layer.group_send)(
+                        f"replies_{data['parent_id']}",
+                        {
+                            "type": "send_reply",
+                            "reply": result['data'],
+                            "user": result['data'].get('author_name', ''),
+                            "timestamp": result['data'].get('created_at', '')
+                        }
+                    )
 
             return JsonResponse(result, status=get_status_code(result))
         except (KeyError, json.JSONDecodeError):

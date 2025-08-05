@@ -13,15 +13,30 @@ const Comment = ({ userId, comment }) => {
     const [visibleReplyCount, setVisibleReplyCount] = useState(0);
 
     const handleIncomingMessage = useCallback((data) => {
-        console.log("Received message:", data);
-        if (data.type === 'new_comment') {
-          //setComments((prev) => [...prev, data.comment]);
+        console.log("Received incoming reply:", data.reply);
+        
+        if (data.type === 'new_reply') {
+            const reply = data.reply;
+            
+            // Add the new reply to the replies list
+            setReplies(prevReplies => [reply, ...prevReplies]);
+            setReplyCount(prevCount => prevCount + 1);
+            
+            if (reply.author_id === userId) { // user's own reply
+                setVisibleReplyCount(prevCount => prevCount + 1);
+                setShowReplies(true);
+            } else if (showReplies) {
+                // other user and replies are open - prepended to reply list
+                setVisibleReplyCount(prevCount => prevCount + 1);
+            }
+            
+        } else if (data.type === 'connection_established') {
+            //console.log("WebSocket connection established:", data.message);
         }
-      }, []);
-
+    }, []);
+    
     // for HTTPS use wss://
     useWebSocket(`ws://localhost:8000/ws/replies/${comment.id}/`, handleIncomingMessage);
-
 
     const fetchReplies = async () => {
         if (replyCount === replies.length) {
@@ -37,36 +52,31 @@ const Comment = ({ userId, comment }) => {
             const newReplies = (fetchedReplies.data || []).filter(
                 reply => !replies.some(r => r.id === reply.id)
             );
+            setVisibleReplyCount(replies.length + newReplies.length);
             setReplies([...replies, ...newReplies]);
-            setVisibleReplyCount(replies.length);
         } catch (e) {
             // Optionally handle error
             console.error("Error fetching replies:", e);
         }
-        if (loadingReplies) {
-            setLoadingReplies(false);
-        }
+        setLoadingReplies(false);
     };
 
     const handleShowReplies = async () => {
-        setShowReplies(!showReplies);
-
-        if (showReplies && replies.length === 0) {
-            await fetchReplies();
-        }
+        setShowReplies(prevShowReplies => {
+            const newValue = !prevShowReplies;
+            
+            //Check if we need to fetch replies when opening
+            if (newValue && visibleReplyCount === 0 && replyCount > 0) {
+                fetchReplies();
+            }
+            
+            return newValue;
+        });
     };
 
     const handleReply = async (replyText) => {
         try {
             const resp = await createComment(comment.post_id, userId, comment.id, replyText);
-            if (resp && resp.success) {
-                setReplyCount(replyCount + 1);
-                setReplies([resp.data, ...replies]);
-                setVisibleReplyCount(visibleReplyCount + 1);
-                if (!showReplies) {
-                    setShowReplies(true);
-                }
-            }
         } catch (error) {
             console.error("Error creating reply:", error);
         }
@@ -141,67 +151,71 @@ const Comment = ({ userId, comment }) => {
 function CommentList({ userId, post }) {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [showAll, setShowAll] = useState(false);
     const [commentCount, setCommentCount] = useState(post.comment_count || 0);
     const [visibleCommentCount, setVisibleCommentCount] = useState(0);
 
-    const fetchComments = async (offset = 0, limit = 2) => {
-        setLoading(true);
+    const handleIncomingMessage = useCallback((data) => {
+        console.log("Received incoming comment:", data.comment);
+
+        if (data.type === 'new_comment') {
+            const comment = data.comment;
+            setComments(prevComments => [comment, ...prevComments]);
+            setCommentCount(prevCount => prevCount + 1);
+            setVisibleCommentCount(prevCount => prevCount + 1);
+        }
+    }, []);
+
+    useWebSocket(`ws://localhost:8000/ws/comments/${post.id}/`, handleIncomingMessage);
+
+    const fetchComments = async () => {
+        if (commentCount === comments.length) {
+            return;
+        }
+        if (comments.length === 0) {
+            setLoading(true);
+        }
         try {
-            const response = await getUserPostComments(userId, post.id, offset, limit);
+            const response = await getUserPostComments(userId, post.id, comments.length, 4);
             if (response && response.success) {
                 // Filter out duplicates
                 const newComments = (response.data || []).filter(
                     c => !comments.some(existing => existing.id === c.id)
                 );
-                setComments(offset === 0 ? newComments : [...comments, ...newComments]);
-                setVisibleCommentCount(offset === 0 ? newComments.length : comments.length + newComments.length);
+                setVisibleCommentCount(comments.length + newComments.length);
+                setComments([...newComments, ...comments]);
             } else {
-                if (offset === 0) setComments([]);
                 if (response && response.message) {
                     console.error("Failed to fetch comments:", response.message);
                 }
             }
         } catch (error) {
-            if (offset === 0) setComments([]);
             console.error("Error fetching comments:", error);
-        } finally {
-            setLoading(false);
         }
+        setLoading(false);
     };
 
+    // to initially load comments
     useEffect(() => {
         setCommentCount(post.comment_count || 0);
         fetchComments(0, 2);
-    }, [userId, post.id, post.comment_count]);
-
-    const handleShowMore = async () => {
-        await fetchComments(comments.length, 8);
-        setShowAll(comments.length + 8 >= commentCount);
-    };
-
-    const handleNewComment = (newComment) => {
-        setComments([newComment, ...comments]);
-        setCommentCount(commentCount + 1);
-        setVisibleCommentCount(visibleCommentCount + 1);
-    };
+    }, [userId, post.id]);
 
     return (
         <div>
             {loading && <div className="text-gray-400 text-sm">Loading comments...</div>}
-            {!loading && comments.length === 0 && (
+            {!loading && commentCount === 0 && (
                 <div className="text-gray-500 text-sm">No comments yet</div>
             )}
             {comments.map(comment => (
                 <Comment key={comment.id} comment={comment} userId={userId} />
             ))}
-            {!showAll && commentCount > comments.length && comments.length > 0 && (
+            {commentCount > visibleCommentCount && commentCount > 0 && (
                 <button
                     className="mt-2 text-blue-600 hover:underline text-sm"
-                    onClick={handleShowMore}
+                    onClick={fetchComments}
                     disabled={loading}
                 >
-                    Show more comments ({commentCount - comments.length})
+                    Show more comments ({commentCount - visibleCommentCount})
                 </button>
             )}
         </div>
