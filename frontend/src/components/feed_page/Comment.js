@@ -183,7 +183,7 @@ function CommentList({ userId, user, post }) {
                     c => !comments.some(existing => existing.id === c.id)
                 );
                 setVisibleCommentCount(comments.length + newComments.length);
-                setComments([...newComments, ...comments]);
+                setComments([...comments, ...newComments]);
             } else {
                 if (response && response.message) {
                     console.error("Failed to fetch comments:", response.message);
