@@ -1,10 +1,10 @@
 import React from 'react';
 import ContentList from './ContentList';
 
-const FeedPage = ({ userId }) => {
+const FeedPage = ({ userId, user }) => {
     return (
         <div>
-            <ContentList userId={userId} />
+            <ContentList userId={userId} user={user} />
         </div>
     );
 };

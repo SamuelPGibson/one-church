@@ -42,7 +42,7 @@ function PostHeader({ userId, post }) {
     );
 }
 
-function Post({ userId, post }) {
+function Post({ userId, user, post }) {
 
     return (
         <div className="post bg-white rounded-lg shadow-md p-6 mb-6">
@@ -57,8 +57,8 @@ function Post({ userId, post }) {
                     />
                 )}
             </div>
-            <PostActionBar userId={userId} post={post} />
-            <CommentList userId={userId} post={post} />
+            <PostActionBar userId={userId} user={user} post={post} />
+            <CommentList userId={userId} user={user} post={post} />
         </div>
     );
 }

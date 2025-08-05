@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { like, dislike, removeLike, removeDislike } from '../../api/api';
-import { goingEvent, removeGoingEvent, interestedEvent, removeInterestedEvent } from '../../api/api';
+import { createComment, goingEvent, removeGoingEvent, interestedEvent, removeInterestedEvent } from '../../api/api';
 
 
 function LikeButtons({ userId, item }) {
@@ -194,12 +194,84 @@ function CommentActionBar({ userId, comment, replyCount, onReply }) {
     );
 }
 
-function PostActionBar({ userId, post, onLike, onDislike }) {
+function CommentEntry({ userId, user, post, placeholder, onClose }) {
+    const [replyValue, setReplyValue] = useState('');
+
+    const handleSubmit = async (replyText) => {
+        try {
+            const resp = await createComment(post.id, userId, 0, replyText);
+            setReplyValue(''); // Clear the input after posting
+            if (onClose) onClose();
+        } catch (error) {
+            console.error("Error creating reply:", error);
+        }
+    };
+
+    const handleCancel = () => {
+        setReplyValue('');
+        if (onClose) onClose();
+    };
+
+    return (
+        <div className="w-full mb-4">
+            <div className="flex gap-3">
+                {/* Left column: Profile picture */}
+                <div className="flex-shrink-0">
+                    <img
+                        src={user?.pfp_url || '/default-profile.png'}
+                        alt="Profile"
+                        className="w-10 h-10 rounded-full object-cover"
+                    />
+                </div>
+                
+                {/* Right column: Textarea and buttons */}
+                <div className="flex-1 flex flex-col">
+                    <textarea
+                        placeholder={placeholder}
+                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring resize-none min-h-[40px] max-h-32"
+                        value={replyValue}
+                        onChange={e => setReplyValue(e.target.value)}
+                        rows={1}
+                        style={{
+                            minHeight: '40px',
+                            maxHeight: '128px',
+                            resize: 'none'
+                        }}
+                    />
+                    
+                    {/* Buttons row - Cancel always shows, Post only when there's text */}
+                    <div className="flex justify-end gap-2 mt-2">
+                        <button
+                            className="px-3 py-1 text-gray-600 hover:text-gray-800 text-sm"
+                            onClick={handleCancel}
+                        >
+                            Cancel
+                        </button>
+                        {replyValue.trim() && (
+                            <button
+                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded text-sm"
+                                onClick={() => handleSubmit(replyValue)}
+                            >
+                                Post
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function PostActionBar({ userId, user, post, onLike, onDislike }) {
     const [commentOpen, setCommentOpen] = useState(false);
 
     const handleCommentClick = () => {
         setCommentOpen(!commentOpen);
         //if (onCommentClick) onCommentClick();
+    }
+
+    const handleCloseComment = () => {
+        setCommentOpen(false);
     }
 
     return (
@@ -224,27 +296,22 @@ function PostActionBar({ userId, post, onLike, onDislike }) {
             </button>
         </div>
         {commentOpen && (
-            <div className="w-full mb-4">
-                <input
-                    type="text"
-                    placeholder="Write a comment..."
-                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
-                />
-                <button className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">
-                    Post
-                </button>
-            </div>
+            <CommentEntry userId={userId} user={user} post={post} placeholder="Write a comment..." onClose={handleCloseComment} />
         )}
         </>
     );
 }
 
-function EventActionBar({ userId, event }) {
+function EventActionBar({ userId, user, event }) {
     const [commentOpen, setCommentOpen] = useState(false);
 
     const handleCommentClick = () => {
         setCommentOpen(!commentOpen);
     };
+
+    const handleCloseComment = () => {
+        setCommentOpen(false);
+    }
 
     return (
         <>
@@ -268,16 +335,7 @@ function EventActionBar({ userId, event }) {
                 </button>
             </div>
             {commentOpen && (
-                <div className="w-full mb-4">
-                    <input
-                        type="text"
-                        placeholder="Write a comment..."
-                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
-                    />
-                    <button className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">
-                        Post
-                    </button>
-                </div>
+                <CommentEntry userId={userId} user={user} post={event} placeholder="Write a comment..." onClose={handleCloseComment} />
             )}
         </>
     );

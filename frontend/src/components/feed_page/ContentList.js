@@ -5,7 +5,7 @@ import Event from "./Event";
 
 
 
-export default function ContentList({ userId }) {
+export default function ContentList({ userId, user }) {
     const [items, setItems] = useState([]);
 
     const fetchEvents = async () => {
@@ -42,9 +42,9 @@ export default function ContentList({ userId }) {
             ) : (
                 items.map(item => (
                     item.type === "post" ? (
-                        <Post key={item.id} userId={userId} post={item} />
+                        <Post key={item.id} userId={userId} user={user} post={item} />
                     ) : item.type === "event" ? (
-                        <Event key={item.id} userId={userId} event={item} />
+                        <Event key={item.id} userId={userId} user={user} event={item} />
                     ) : (
                         <div key={item.id}>Unknown content type</div>
                     )

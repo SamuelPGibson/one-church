@@ -35,7 +35,7 @@ function EventHeader({ userId, event }) {
 }
 
 // Event component displays event details and attendees
-function Event({ userId, event }) {
+function Event({ userId, user, event }) {
     // State to toggle attendee details visibility
     const [showDetails, setShowDetails] = useState(false);
 
@@ -55,7 +55,7 @@ function Event({ userId, event }) {
                     />
                 )}
             </div>
-            <EventActionBar userId={userId} event={event} />
+            <EventActionBar userId={userId} user={user} event={event} />
             {/* <div className="mb-4">
                 <button
                     className="text-blue-700 hover:underline text-sm"
@@ -73,7 +73,7 @@ function Event({ userId, event }) {
                     </ul>
                 )}
             </div> */}
-            <CommentList userId={userId} post={event} />
+            <CommentList userId={userId} user={user} post={event} />
         </div>
     );
 }

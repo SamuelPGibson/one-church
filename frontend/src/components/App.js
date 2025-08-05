@@ -42,7 +42,7 @@ function App() {
                         <Route path="/home" element={<Home />} />
                         <Route path="/login" element={<Login setUserId={updateUserId} />} />
                         <Route path="/signup" element={<Signup setUserId={updateUserId} />} />
-                        <Route path="/feed" element={<FeedPage userId={userId} />} />
+                        <Route path="/feed" element={<FeedPage userId={userId} user={user} />} />
                         <Route path="/explore" element={<ExplorePage userId={userId} />} />
                         <Route path="/create-post" element={<CreatePost userId={userId} />} />
                         <Route path="/create-event" element={<CreateEvent userId={userId} />} />

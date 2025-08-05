@@ -5,7 +5,7 @@ import { useWebSocket } from '../../hooks/useWebSocket';
 import React, { useState, useEffect, useCallback } from 'react';
 
 
-const Comment = ({ userId, comment }) => {
+const Comment = ({ userId, user, comment }) => {
     const [showReplies, setShowReplies] = useState(false);
     const [replies, setReplies] = useState([]);
     const [loadingReplies, setLoadingReplies] = useState(false);
@@ -106,6 +106,7 @@ const Comment = ({ userId, comment }) => {
                 {/* Row 3: Action bar */}
                 <CommentActionBar
                     userId={userId}
+                    user={user}
                     comment={comment}
                     replyCount={replyCount}
                     onReply={handleReply}
@@ -128,7 +129,7 @@ const Comment = ({ userId, comment }) => {
                         ) : (
                             <>
                                 {replies.map(reply => (
-                                    <Comment key={reply.id} comment={reply} userId={userId} />
+                                    <Comment key={reply.id} comment={reply} userId={userId} user={user} />
                                 ))}
                                 {replyCount > replies.length && (
                                     <button
@@ -148,7 +149,7 @@ const Comment = ({ userId, comment }) => {
     );
 };
 
-function CommentList({ userId, post }) {
+function CommentList({ userId, user, post }) {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [commentCount, setCommentCount] = useState(post.comment_count || 0);
@@ -207,7 +208,7 @@ function CommentList({ userId, post }) {
                 <div className="text-gray-500 text-sm">No comments yet</div>
             )}
             {comments.map(comment => (
-                <Comment key={comment.id} comment={comment} userId={userId} />
+                <Comment key={comment.id} comment={comment} userId={userId} user={user} />
             ))}
             {commentCount > visibleCommentCount && commentCount > 0 && (
                 <button
