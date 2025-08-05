@@ -167,7 +167,7 @@ function CommentList({ userId, post }) {
 
     useWebSocket(`ws://localhost:8000/ws/comments/${post.id}/`, handleIncomingMessage);
 
-    const fetchComments = async () => {
+    const fetchComments = async (limit = 4) => {
         if (commentCount === comments.length) {
             return;
         }
@@ -175,7 +175,7 @@ function CommentList({ userId, post }) {
             setLoading(true);
         }
         try {
-            const response = await getUserPostComments(userId, post.id, comments.length, 4);
+            const response = await getUserPostComments(userId, post.id, comments.length, limit);
             if (response && response.success) {
                 // Filter out duplicates
                 const newComments = (response.data || []).filter(
@@ -197,7 +197,7 @@ function CommentList({ userId, post }) {
     // to initially load comments
     useEffect(() => {
         setCommentCount(post.comment_count || 0);
-        fetchComments(0, 2);
+        fetchComments(2);
     }, [userId, post.id]);
 
     return (
@@ -212,7 +212,7 @@ function CommentList({ userId, post }) {
             {commentCount > visibleCommentCount && commentCount > 0 && (
                 <button
                     className="mt-2 text-blue-600 hover:underline text-sm"
-                    onClick={fetchComments}
+                    onClick={() => fetchComments()}
                     disabled={loading}
                 >
                     Show more comments ({commentCount - visibleCommentCount})
