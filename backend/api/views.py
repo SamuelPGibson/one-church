@@ -411,7 +411,9 @@ def create_comment(request: HttpRequest) -> JsonResponse:
                         f"comments_{data['post_id']}",
                         {
                             "type": "send_comment",
-                            "comment": result['data']
+                            "comment": result['data'],
+                            "user": result['data'].get('author_name', ''),
+                            "timestamp": result['data'].get('created_at', '')
                         }
                     )
                 else:
