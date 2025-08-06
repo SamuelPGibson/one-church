@@ -42,7 +42,7 @@ function FilterBar({ users, setUsers, organizations, setOrganizations, events, s
   const selected = getSelectedButton();
 
   return (
-    <div className="flex space-x-2">
+    <div className="flex space-x-2 mb-2">
       {BUTTONS.map((btn) => (
         <button
           key={btn.key}

@@ -40,8 +40,8 @@ class DummyDatabase(Database):
              "first_name": "Big", "last_name": "Cow", "email": "bigcow@gmail.com", "bio": "I am a really big cow"}
         ]
         self.organizations = [
-            {"id": 1, "name": "Org1", "parent_id": 0},
-            {"id": 2, "name": "Org2", "parent_id": 0}
+            {"id": 1, "name": "Org1", "location": "Saskatoon", "parent_id": 0},
+            {"id": 2, "name": "Org2", "location": "Regina", "parent_id": 0}
         ]
         self.posts = [
             {"id": 1, "author_id": 1,
@@ -874,10 +874,28 @@ class DummyDatabase(Database):
     # Search
     def search(self, query: str, include_posts: bool, include_events: bool,
                include_organizations: bool, include_users: bool) -> dict:
-        results = {
-            "users": [user for user in self.users if query.lower() in user.get("username", "").lower()],
-            "organizations": [org for org in self.organizations if org.get('parent_id') == 0 and query.lower() in org.get("name", "").lower()]
-        }
+        results = []
+
+        if include_users:
+            for user in self.users:
+                user['type'] = 'user'
+                results.append(user)
+        if include_organizations:
+            for org in self.organizations:
+                org['type'] = 'organization'
+                results.append(org)
+        if include_events:
+            for event in self.events:
+                event['type'] = 'event'
+                results.append(event)
+        if include_posts:
+            for post in self.posts:
+                post['type'] = 'post'
+                results.append(post)
+
+        import random
+        random.shuffle(results)
+
         return {
             "success": True,
             "message": "Search completed",

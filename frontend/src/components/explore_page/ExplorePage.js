@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import FilterBar from "./FilterBar";
 import SearchBar from "./SearchBar";
 import { search } from "../../api/api";
+import ResultsList from "./resultsList";
 
-function ExplorePage({ userId }) {
+function ExplorePage({ userId, user }) {
   const [users, setUsers] = useState(true);
   const [organizations, setOrganizations] = useState(true);
   const [events, setEvents] = useState(true);
@@ -18,8 +19,8 @@ function ExplorePage({ userId }) {
         setResults([]);
         return;
       }
-      const results = await search(userId, queryData, users, organizations, events, posts);
-      setResults(results);
+      const results = await search(userId, queryData, posts, events, organizations, users);
+      setResults(results.data);
     };
     fetchResults();
   }, [queryData, users, organizations, events, posts]);
@@ -36,6 +37,7 @@ function ExplorePage({ userId }) {
         setEvents={setEvents}
         posts={posts}
         setPosts={setPosts} />
+      <ResultsList userId={userId} user={user} results={results} />
     </div>
   );
 }
