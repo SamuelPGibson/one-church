@@ -6,7 +6,7 @@ function Header({ userId, user, setUserId }) {
     const navigate = useNavigate();
 
     function handleLogout() {
-        setUserId(null);
+        setUserId(0);
         navigate("/");
     }
 

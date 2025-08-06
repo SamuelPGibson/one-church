@@ -3,12 +3,20 @@ import React, { useState } from 'react';
 import { like, dislike, removeLike, removeDislike } from '../../api/api';
 import { createComment, goingEvent, removeGoingEvent, interestedEvent, removeInterestedEvent } from '../../api/api';
 
+function alertUser(message) {
+    alert(message);
+}
 
 function LikeButtons({ userId, item }) {
     const [likeState, setLikeState] = useState(item.user_liked || false);
     const [dislikeState, setDislikeState] = useState(item.user_disliked || false);
 
     const handleLike = async () => {
+        if (!userId) {
+            alertUser("You must be logged in to like");
+            return;
+        }
+
         if (!likeState) {
             setLikeState(true);
             const res = await like(item.id, userId);
@@ -29,6 +37,11 @@ function LikeButtons({ userId, item }) {
     };
 
     const handleDislike = async () => {
+        if (!userId) {
+            alertUser("You must be logged in to dislike");
+            return;
+        }
+
         if (!dislikeState) {
             setDislikeState(true);
             const res = await dislike(item.id, userId);
@@ -55,7 +68,6 @@ function LikeButtons({ userId, item }) {
                 className={`flex items-center gap-1 px-2 py-1 rounded ${likeState ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'}`}
                 onClick={handleLike}
                 aria-label="Like"
-                disabled={likeState}
             >
                 <span role="img" aria-label="like">👍</span>
                 {item.like_count + (likeState && !item.user_liked ? 1 : 0)}
@@ -64,7 +76,6 @@ function LikeButtons({ userId, item }) {
                 className={`flex items-center gap-1 px-2 py-1 rounded ${dislikeState ? 'bg-red-100 text-red-600' : 'hover:bg-gray-100'}`}
                 onClick={handleDislike}
                 aria-label="Dislike"
-                disabled={dislikeState}
             >
                 <span role="img" aria-label="dislike">👎</span>
                 {item.dislike_count + (dislikeState && !item.user_disliked ? 1 : 0)}
@@ -78,6 +89,11 @@ function GoingButtons({ userId, event }) {
     const [interestedState, setInterestedState] = useState(event.user_interested || false);
 
     const handleGoing = async () => {
+        if (!userId) {
+            alertUser("You must be logged in to go to an event");
+            return;
+        }
+
         if (!goingState) {
             setGoingState(true);
             const res = await goingEvent(event.id, userId);
@@ -98,6 +114,11 @@ function GoingButtons({ userId, event }) {
     };
 
     const handleInterested = async () => {
+        if (!userId) {
+            alertUser("You must be logged in to be interested in an event");
+            return;
+        }
+
         if (!interestedState) {
             setInterestedState(true);
             const res = await interestedEvent(event.id, userId);
@@ -123,7 +144,6 @@ function GoingButtons({ userId, event }) {
                 className={`flex items-center gap-1 px-2 py-1 rounded ${goingState ? 'bg-green-100 text-green-600' : 'hover:bg-gray-100'}`}
                 onClick={handleGoing}
                 aria-label="Going"
-                disabled={goingState}
             >
                 <span role="img" aria-label="going">✅</span>
                 Going{typeof event.going_count === 'number' ? ` (${event.going_count + (goingState && !event.user_going ? 1 : 0)})` : ''}
@@ -132,7 +152,6 @@ function GoingButtons({ userId, event }) {
                 className={`flex items-center gap-1 px-2 py-1 rounded ${interestedState ? 'bg-yellow-100 text-yellow-600' : 'hover:bg-gray-100'}`}
                 onClick={handleInterested}
                 aria-label="Interested"
-                disabled={interestedState}
             >
                 <span role="img" aria-label="interested">⭐</span>
                 Interested{typeof event.interested_count === 'number' ? ` (${event.interested_count + (interestedState && !event.user_interested ? 1 : 0)})` : ''}
@@ -146,6 +165,10 @@ function CommentActionBar({ userId, comment, replyCount, onReply }) {
     const [replyValue, setReplyValue] = useState('');
 
     const handleReplyClick = () => {
+        if (!userId) {
+            alertUser("You must be logged in to reply to a comment");
+            return;
+        }
         setReplyOpen(!replyOpen);
     };
 
@@ -266,6 +289,10 @@ function PostActionBar({ userId, user, post, onLike, onDislike }) {
     const [commentOpen, setCommentOpen] = useState(false);
 
     const handleCommentClick = () => {
+        if (!userId) {
+            alertUser("You must be logged in to comment on a post");
+            return;
+        }
         setCommentOpen(!commentOpen);
         //if (onCommentClick) onCommentClick();
     }
@@ -306,6 +333,10 @@ function EventActionBar({ userId, user, event }) {
     const [commentOpen, setCommentOpen] = useState(false);
 
     const handleCommentClick = () => {
+        if (!userId) {
+            alertUser("You must be logged in to comment on an event");
+            return;
+        }
         setCommentOpen(!commentOpen);
     };
 

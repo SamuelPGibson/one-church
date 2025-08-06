@@ -16,7 +16,7 @@ import ProfilePage from "./profile_page/ProfilePage";
 import { getUser } from "../api/api";
 
 function App() {
-    const [userId, setUserId] = useState(null);
+    const [userId, setUserId] = useState(0);
     const [user, setUser] = useState(null);
 
     function updateUserId(id) {

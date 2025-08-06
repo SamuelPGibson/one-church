@@ -43,9 +43,11 @@ function PostHeader({ userId, post }) {
                 </div>
             </div>
             {/* Follow button */}
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
-                Follow
-            </button>
+            {(userId && userId != post.author_id) ? (
+                <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                    Follow
+                </button>
+            ) : null}
         </div>
     );
 }

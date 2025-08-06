@@ -589,7 +589,7 @@ class DummyDatabase(Database):
         for entry in self.interested_events:
             if entry["event_id"] == event_id and entry["user_id"] == user_id:
                 return {
-                    "success": False,
+                    "success": True,
                     "message": "User already marked as interested in the event"
                 }
         for entry in self.going_events:
@@ -624,7 +624,7 @@ class DummyDatabase(Database):
         for entry in self.going_events:
             if entry["event_id"] == event_id and entry["user_id"] == user_id:
                 return {
-                    "success": False,
+                    "success": True,
                     "message": "User already marked as going to the event"
                 }
         for entry in self.interested_events:
@@ -723,7 +723,7 @@ class DummyDatabase(Database):
         for entry in self.dislikes:
             if entry["post_id"] == post_id and entry["user_id"] == user_id:
                 return {
-                    "success": False,
+                    "success": True,
                     "message": "User already disliked the post"
                 }
         for entry in self.likes:
@@ -758,7 +758,7 @@ class DummyDatabase(Database):
         for entry in self.likes:
             if entry["post_id"] == post_id and entry["user_id"] == user_id:
                 return {
-                    "success": False,
+                    "success": True,
                     "message": "User already liked the post"
                 }
         for entry in self.dislikes:
