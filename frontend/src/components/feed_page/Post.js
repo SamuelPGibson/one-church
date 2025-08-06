@@ -2,6 +2,7 @@ import CommentList from './Comment';
 import { PostActionBar } from './ActionBar'; // must have {} for non-default exports
 import React, { useState } from 'react';
 import UserLink from '../UserLink';
+import MediaFrame from './MediaFrame';
 
 /**
  * Post structure:
@@ -14,9 +15,13 @@ import UserLink from '../UserLink';
  * Comments - preview first few comments and button to expand to see all comments
  */
 
-function PostHeader({ userId, post }) {
+function PostHeader({ userId, post, showContent, setShowContent, toggleShowContent }) {
+    const handleToggleShowContent = () => {
+        setShowContent(!showContent);
+    };
+    
     return (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 mb-2">
             {/* Author profile picture */}
             <UserLink 
                 userId={post.author_id} 
@@ -43,32 +48,44 @@ function PostHeader({ userId, post }) {
                 </div>
             </div>
             {/* Follow button */}
-            {(userId && userId != post.author_id) ? (
+            {(userId && userId != post.author_id && !toggleShowContent) ? (
                 <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
                     Follow
+                </button>
+            ) : null}
+            {(toggleShowContent) ? (
+                <button className="text-blue-500 hover:text-blue-600" onClick={handleToggleShowContent}>
+                    {showContent ? "Hide Content" : "Show Content"}
                 </button>
             ) : null}
         </div>
     );
 }
 
-function Post({ userId, user, post }) {
+function Post({ userId, user, post, hideContent }) {
+    const [showContent, setShowContent] = useState(!hideContent);
 
     return (
         <div className="post bg-white rounded-lg shadow-md p-6 mb-6">
-            <PostHeader userId={userId} post={post} />
+            <PostHeader
+                userId={userId}
+                post={post}
+                showContent={showContent}
+                setShowContent={setShowContent}
+                toggleShowContent={hideContent}
+            />
             <div className="post-body mb-4">
                 <p className="text-gray-800 mb-2">{post.caption}</p>
-                {post.image_url && (
-                    <img
-                        src={post.image_url}
-                        alt="Post"
-                        className="w-full max-h-96 object-cover rounded-md mb-3"
-                    />
+                {showContent && (
+                    <MediaFrame post={post} />
                 )}
             </div>
-            <PostActionBar userId={userId} user={user} post={post} />
-            <CommentList userId={userId} user={user} post={post} />
+            {showContent && (
+                <PostActionBar userId={userId} user={user} post={post} />
+            )}
+            {showContent && (
+                <CommentList userId={userId} user={user} post={post} />
+            )}
         </div>
     );
 }
