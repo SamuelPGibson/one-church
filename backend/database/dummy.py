@@ -1022,16 +1022,19 @@ class DummyDatabase(Database):
         }
 
     def create_chat_message(self, chat_id: int, sender_id: int, content: str) -> dict:
-        self.messages.append({
+        message = {
             "id": len(self.messages) + 1,
             "chat_id": chat_id,
             "sender_id": sender_id,
             "content": content,
             "created_at": datetime.now().isoformat()
-        })
+        }
+        self.messages.append(message)
+        message['author_name'], message['author_pfp'] = self._get_user_name_pfp(sender_id)
         return {
             "success": True,
-            "message": "Message created successfully"
+            "message": "Message created successfully",
+            "data": message
         }
 
     def delete_chat_message(self, chat_id: int, message_id: int) -> dict:

@@ -567,6 +567,27 @@ def create_chat_message(request: HttpRequest, chat_id: int) -> JsonResponse:
         try:
             data = json.loads(request.body)
             result = db.create_chat_message(chat_id, data["sender_id"], data["content"])
+
+            # Only send WebSocket message if the database operation was successful
+            if result.get("success"):
+                try:
+                    channel_layer = get_channel_layer()
+                    message_data = {
+                        "type": "send_message",
+                        "message": result['data'], # contains all message info
+                        "chat_id": chat_id,
+                        "user": result['data'].get('sender_id', ''),
+                        "timestamp": result['data'].get('created_at', '')
+                    }
+                    
+                    async_to_sync(channel_layer.group_send)(
+                        f"chat_{chat_id}",
+                        message_data
+                    )
+                except Exception as e:
+                    # Don't fail the request if WebSocket fails
+                    pass
+
             return JsonResponse(result, status=get_status_code(result))
         except (KeyError, json.JSONDecodeError):
             return JsonResponse({"error": "Invalid input"}, status=400)

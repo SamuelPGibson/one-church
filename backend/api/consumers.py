@@ -62,7 +62,6 @@ class CommentConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.error(f"CommentConsumer send_comment error: {e}")
 
-
 class ReplyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         try:
@@ -117,3 +116,54 @@ class ReplyConsumer(AsyncWebsocketConsumer):
             }))
         except Exception as e:
             logger.error(f"ReplyConsumer send_reply error: {e}")
+
+
+class MessageConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        try:
+            self.chat_id = self.scope['url_route']['kwargs']['chat_id']
+            self.group_name = f'chat_{self.chat_id}'
+
+            logger.info(f"MessageConsumer: Connecting to group {self.group_name}")
+
+            await self.channel_layer.group_add(
+                self.group_name,
+                self.channel_name
+            )
+            await self.accept()
+
+            logger.info(f"MessageConsumer: Successfully connected to group {self.group_name}")
+
+            # Send a welcome message
+            await self.send(text_data=json.dumps({
+                'type': 'connection_established',
+                'message': f'Connected to chat {self.chat_id}',
+                'group': self.group_name
+            }))
+        except Exception as e:
+            logger.error(f"MessageConsumer connect error: {e}")
+            await self.close()
+
+    async def disconnect(self, close_code):
+        try:
+            await self.channel_layer.group_discard(
+                self.group_name,
+                self.channel_name
+            )
+            logger.info(f"MessageConsumer: Disconnected from group {self.group_name} with code {close_code}")
+        except Exception as e:
+            logger.error(f"MessageConsumer disconnect error: {e}")
+
+    async def send_message(self, event):
+        try:
+            logger.info(f"MessageConsumer: Sending message to group {self.group_name}")
+            logger.info(f"MessageConsumer: Event data: {event}")
+            
+            await self.send(text_data=json.dumps({
+                'type': 'new_message',
+                'message': event.get('message', {})
+            }))
+            logger.info(f"MessageConsumer: Successfully sent message to group {self.group_name}")
+        except Exception as e:
+            logger.error(f"MessageConsumer send_message error: {e}")
+            logger.error(f"MessageConsumer event data: {event}")
