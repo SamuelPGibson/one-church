@@ -825,7 +825,7 @@ export async function getUserFeed(userId, offset = 0, limit = 10, baseUrl = "") 
 
 // Search
 
-export async function search(query, includePosts = true, includeEvents = true, includeOrganizations = true, includeUsers = true, baseUrl = "") {
+export async function search(userId, query, includePosts = true, includeEvents = true, includeOrganizations = true, includeUsers = true, baseUrl = "") {
   try {
     const res = await fetch(`${baseUrl}/api/search/?query=${encodeURIComponent(query)}&includePosts=${includePosts}&includeEvents=${includeEvents}&includeOrganizations=${includeOrganizations}&includeUsers=${includeUsers}`);
     const data = await res.json();
