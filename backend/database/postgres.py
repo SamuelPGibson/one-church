@@ -224,6 +224,40 @@ class PostgreSQLDatabase(Database):
     def get_user_feed(self, user_id: int, offset: int = 0, limit: int = 10) -> dict:
         pass
 
+        # Messaging
+    def get_chats(self, user_id: int) -> dict:
+        pass
+
+    def get_chat_messages(self, chat_id: int, offset: int = 0, limit: int = 10) -> dict:
+        pass
+
+    def create_chat(self, members: dict) -> dict:
+        pass
+
+    def create_group_chat(self, members: dict, name: str, image_url: str) -> dict:
+        pass
+
+    def add_group_chat_member(self, chat_id: int, member: dict) -> dict:
+        pass
+
+    def remove_group_chat_member(self, chat_id: int, member_id: int) -> dict:
+        pass
+
+    def create_chat_message(self, chat_id: int, sender_id: int, content: str) -> dict:
+        pass
+
+    def delete_chat_message(self, chat_id: int, message_id: int) -> dict:
+        pass
+
+    def read_chat_message(self, chat_id: int, message_id: int, user_id: int) -> dict:
+        pass
+
+    def react_to_chat_message(self, chat_id: int, message_id: int, user_id: int, reaction: str) -> dict:
+        pass
+
+    def remove_chat_message_reaction(self, chat_id: int, message_id: int, user_id: int, reaction_id: int) -> dict:
+        pass
+
     # Search
     def search(self, query: str, include_posts: bool, include_events: bool,
                include_organizations: bool, include_users: bool) -> dict:

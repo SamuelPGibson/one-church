@@ -89,6 +89,19 @@ urlpatterns = [
     path('users/<int:user_id>/comments/<int:comment_id>/replies/', views.get_replies),
     path('users/<int:user_id>/feed/', views.get_user_feed),
 
+    # Messaging
+    path('users/<int:user_id>/chats/', views.get_chats),
+    path('chats/<int:chat_id>/messages/', views.get_chat_messages),
+    path('chats/create/', views.create_chat),
+    path('chats/group/create/', views.create_group_chat),
+    path('chats/<int:chat_id>/members/add/', views.add_group_chat_member),
+    path('chats/<int:chat_id>/members/<int:member_id>/remove/', views.remove_group_chat_member),
+    path('chats/<int:chat_id>/messages/create/', views.create_chat_message),
+    path('chats/<int:chat_id>/messages/<int:message_id>/delete/', views.delete_chat_message),
+    path('chats/<int:chat_id>/messages/<int:message_id>/read/', views.read_chat_message),
+    path('chats/<int:chat_id>/messages/<int:message_id>/reactions/add/', views.react_to_chat_message),
+    path('chats/<int:chat_id>/messages/<int:message_id>/reactions/<int:reaction_id>/remove/', views.remove_chat_message_reaction),
+
     # Search
     path('search/', views.search),
     path('search/organizations/', views.search_organizations),

@@ -1033,6 +1033,198 @@ class Database(ABC):
                             'data' contains the list of posts and events if successful.
         '''
 
+    # Messaging
+    @abstractmethod
+    def get_chats(self, user_id: int) -> dict:
+        '''
+        Purpose:
+            Retrieve the chats for the given user.
+        Pre-conditions:
+            :param user_id: The ID of the user whose chats are to be retrieved
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the chats with keys:
+                            'success' is True if chats retrieval is successful, otherwise False.
+                            'message' contains additional information about the result.
+                            'data' contains the list of chats if successful.
+        '''
+
+    @abstractmethod
+    def get_chat_messages(self, chat_id: int, offset: int = 0, limit: int = 10) -> dict:
+        '''
+        Purpose:
+            Retrieve the messages for the given chat.
+        Pre-conditions:
+            :param chat_id: The ID of the chat whose messages are to be retrieved
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the messages with keys:
+                            'success' is True if messages retrieval is successful, otherwise False.
+                            'message' contains additional information about the result.
+                            'data' contains the list of messages if successful.
+        '''
+
+    @abstractmethod
+    def create_chat(self, members: dict) -> dict:
+        '''
+        Purpose:
+            Create a new chat between two users or organizations.
+        Pre-conditions:
+            :param members: A dictionary containing the members of the chat
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the chat with keys:
+                            'success' is True if chat creation is successful, otherwise False.
+                            'message' contains additional information about the result.
+                            'data' contains the chat information if successful.
+        '''
+
+    @abstractmethod
+    def create_group_chat(self, members: dict, name: str, image_url: str) -> dict:
+        '''
+        Purpose:
+            Create a new group chat.
+        Pre-conditions:
+            :param members: A dictionary containing the members of the chat
+            :param name: The name of the group chat
+            :param image_url: The image URL of the group chat
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the group chat creation operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the group chat creation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def add_group_chat_member(self, chat_id: int, member: dict) -> dict:
+        '''
+        Purpose:
+            Add a member to a group chat.
+        Pre-conditions:
+            :param chat_id: The ID of the chat to add the member to
+            :param member: A dictionary containing the member to add
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the group chat member addition operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the group chat member addition is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def remove_group_chat_member(self, chat_id: int, member_id: int) -> dict:
+        '''
+        Purpose:
+            Remove a member from a group chat.
+        Pre-conditions:
+            :param chat_id: The ID of the chat to remove the member from
+            :param member_id: The ID of the member to remove
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the group chat member removal operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the group chat member removal is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def create_chat_message(self, chat_id: int, sender_id: int, content: str) -> dict:
+        '''
+        Purpose:
+            Create a new message in a chat.
+        Pre-conditions:
+            :param chat_id: The ID of the chat to create the message in
+            :param sender_id: The ID of the sender of the message
+            :param content: The content of the message
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the message creation operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the message creation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def delete_chat_message(self, chat_id: int, message_id: int) -> dict:
+        '''
+        Purpose:
+            Delete a message from a chat.
+        Pre-conditions:
+            :param chat_id: The ID of the chat to delete the message from
+            :param message_id: The ID of the message to be deleted
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the message deletion operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the message deletion is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def read_chat_message(self, chat_id: int, message_id: int, user_id: int) -> dict:
+        '''
+        Purpose:
+            Mark a message as read by a user.
+        Pre-conditions:
+            :param chat_id: The ID of the chat to mark the message as read in
+            :param message_id: The ID of the message to be marked as read
+            :param user_id: The ID of the user who is marking the message as read
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the message read operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the message read is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def react_to_chat_message(self, chat_id: int, message_id: int, user_id: int, reaction: str) -> dict:
+        '''
+        Purpose:
+            React to a message in a chat.
+        Pre-conditions:
+            :param chat_id: The ID of the chat to react to the message in
+            :param message_id: The ID of the message to react to
+            :param user_id: The ID of the user who is reacting to the message
+            :param reaction: The reaction to the message
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the message reaction operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the message reaction is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
+    @abstractmethod
+    def remove_chat_message_reaction(self, chat_id: int, message_id: int, user_id: int, reaction_id: int) -> dict:
+        '''
+        Purpose:
+            Remove a reaction from a message in a chat.
+        Pre-conditions:
+            :param chat_id: The ID of the chat to remove the reaction from
+            :param message_id: The ID of the message to remove the reaction from
+            :param user_id: The ID of the user who is removing the reaction
+            :param reaction_id: The ID of the reaction to remove
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the message reaction removal operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the message reaction removal is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''
+
     # Search
     @abstractmethod
     def search(self, query: str, include_posts: bool, include_events: bool,

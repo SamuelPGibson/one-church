@@ -505,6 +505,115 @@ def get_user_feed(request: HttpRequest, user_id: int) -> JsonResponse:
         return JsonResponse(result, status=get_status_code(result))
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
+# Messaging Endpoints
+def get_chats(request: HttpRequest, user_id: int) -> JsonResponse:
+    if request.method == "GET":
+        result = db.get_chats(user_id)
+        return JsonResponse(result, status=get_status_code(result))
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def get_chat_messages(request: HttpRequest, chat_id: int) -> JsonResponse:
+    if request.method == "GET":
+        offset = int(request.GET.get('offset', 0))
+        limit = int(request.GET.get('limit', 10))
+        result = db.get_chat_messages(chat_id, offset, limit)
+        return JsonResponse(result, status=get_status_code(result))
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def create_chat(request: HttpRequest) -> JsonResponse:
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            result = db.create_chat(data["members"])
+            return JsonResponse(result, status=get_status_code(result))
+        except (KeyError, json.JSONDecodeError):
+            return JsonResponse({"error": "Invalid input"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def create_group_chat(request: HttpRequest) -> JsonResponse:
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            result = db.create_group_chat(data["members"], data["name"], data["image_url"])
+            return JsonResponse(result, status=get_status_code(result))
+        except (KeyError, json.JSONDecodeError):
+            return JsonResponse({"error": "Invalid input"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def add_group_chat_member(request: HttpRequest, chat_id: int) -> JsonResponse:
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            result = db.add_group_chat_member(chat_id, data["member"])
+            return JsonResponse(result, status=get_status_code(result))
+        except (KeyError, json.JSONDecodeError):
+            return JsonResponse({"error": "Invalid input"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def remove_group_chat_member(request: HttpRequest, chat_id: int, member_id: int) -> JsonResponse:
+    if request.method == "DELETE":
+        result = db.remove_group_chat_member(chat_id, member_id)
+        return JsonResponse(result, status=get_status_code(result))
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def create_chat_message(request: HttpRequest, chat_id: int) -> JsonResponse:
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            result = db.create_chat_message(chat_id, data["sender_id"], data["content"])
+            return JsonResponse(result, status=get_status_code(result))
+        except (KeyError, json.JSONDecodeError):
+            return JsonResponse({"error": "Invalid input"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def delete_chat_message(request: HttpRequest, chat_id: int, message_id: int) -> JsonResponse:
+    if request.method == "DELETE":
+        result = db.delete_chat_message(chat_id, message_id)
+        return JsonResponse(result, status=get_status_code(result))
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def read_chat_message(request: HttpRequest, chat_id: int, message_id: int) -> JsonResponse:
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            result = db.read_chat_message(chat_id, message_id, data["user_id"])
+            return JsonResponse(result, status=get_status_code(result))
+        except (KeyError, json.JSONDecodeError):
+            return JsonResponse({"error": "Invalid input"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def react_to_chat_message(request: HttpRequest, chat_id: int, message_id: int) -> JsonResponse:
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            result = db.react_to_chat_message(chat_id, message_id, data["user_id"], data["reaction"])
+            return JsonResponse(result, status=get_status_code(result))
+        except (KeyError, json.JSONDecodeError):
+            return JsonResponse({"error": "Invalid input"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+def remove_chat_message_reaction(request: HttpRequest, chat_id: int, message_id: int, reaction_id: int) -> JsonResponse:
+    print("removing reaction", chat_id, message_id, reaction_id)
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            result = db.remove_chat_message_reaction(chat_id, message_id, data["user_id"], reaction_id)
+            return JsonResponse(result, status=get_status_code(result))
+        except (KeyError, json.JSONDecodeError):
+            return JsonResponse({"error": "Invalid input"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
 # Search
 def search(request: HttpRequest) -> JsonResponse:
     if request.method == "GET":
@@ -601,6 +710,17 @@ remove_dislike = csrf_exempt(remove_dislike)
 get_comments = csrf_exempt(get_comments)
 get_replies = csrf_exempt(get_replies)
 get_user_feed = csrf_exempt(get_user_feed)
+get_chats = csrf_exempt(get_chats)
+get_chat_messages = csrf_exempt(get_chat_messages)
+create_chat = csrf_exempt(create_chat)
+create_group_chat = csrf_exempt(create_group_chat)
+add_group_chat_member = csrf_exempt(add_group_chat_member)
+remove_group_chat_member = csrf_exempt(remove_group_chat_member)
+create_chat_message = csrf_exempt(create_chat_message)
+delete_chat_message = csrf_exempt(delete_chat_message)
+read_chat_message = csrf_exempt(read_chat_message)
+react_to_chat_message = csrf_exempt(react_to_chat_message)
+remove_chat_message_reaction = csrf_exempt(remove_chat_message_reaction)
 search = csrf_exempt(search)
 search_organizations = csrf_exempt(search_organizations)
 search_events = csrf_exempt(search_events)

@@ -847,11 +847,279 @@ export async function searchOrganizations(query, baseUrl = "") {
   }
 }
 
+/**
+ * Searches for events based on the provided query.
+ * @async
+ * @function searchEvents
+ * @param {string} query - The search query.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Search results or error.
+ */
 export async function searchEvents(query, baseUrl = "") {
   try {
     const res = await fetch(`${baseUrl}/api/search/events/?query=${encodeURIComponent(query)}`);
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Failed to search events" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+// Messaging API Functions
+
+/**
+ * Gets all chats for a user.
+ * @async
+ * @function getChats
+ * @param {number} userId - The ID of the user.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Chats data or error.
+ */
+export async function getChats(userId, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/users/${userId}/chats/`);
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to get chats" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Gets messages for a specific chat.
+ * @async
+ * @function getChatMessages
+ * @param {number} chatId - The ID of the chat.
+ * @param {number} offset - The offset for pagination.
+ * @param {number} limit - The limit for pagination.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Messages data or error.
+ */
+export async function getChatMessages(chatId, offset = 0, limit = 10, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/${chatId}/messages/?offset=${offset}&limit=${limit}`);
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to get chat messages" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Creates a new chat between users.
+ * @async
+ * @function createChat
+ * @param {Object} members - The members of the chat.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Chat creation result or error.
+ */
+export async function createChat(members, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/create/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ members }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to create chat" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Creates a new group chat.
+ * @async
+ * @function createGroupChat
+ * @param {Object} members - The members of the group chat.
+ * @param {string} name - The name of the group chat.
+ * @param {string} imageUrl - The image URL of the group chat.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Group chat creation result or error.
+ */
+export async function createGroupChat(members, name, imageUrl, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/group/create/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ members, name, image_url: imageUrl }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to create group chat" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Adds a member to a group chat.
+ * @async
+ * @function addGroupChatMember
+ * @param {number} chatId - The ID of the chat.
+ * @param {Object} member - The member to add.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Member addition result or error.
+ */
+export async function addGroupChatMember(chatId, member, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/${chatId}/members/add/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ member }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to add group chat member" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Removes a member from a group chat.
+ * @async
+ * @function removeGroupChatMember
+ * @param {number} chatId - The ID of the chat.
+ * @param {number} memberId - The ID of the member to remove.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Member removal result or error.
+ */
+export async function removeGroupChatMember(chatId, memberId, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/${chatId}/members/${memberId}/remove/`, {
+      method: "DELETE",
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to remove group chat member" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Creates a new message in a chat.
+ * @async
+ * @function createChatMessage
+ * @param {number} chatId - The ID of the chat.
+ * @param {number} senderId - The ID of the sender.
+ * @param {string} content - The content of the message.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Message creation result or error.
+ */
+export async function createChatMessage(chatId, senderId, content, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/${chatId}/messages/create/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sender_id: senderId, content }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to create chat message" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Deletes a message from a chat.
+ * @async
+ * @function deleteChatMessage
+ * @param {number} chatId - The ID of the chat.
+ * @param {number} messageId - The ID of the message to delete.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Message deletion result or error.
+ */
+export async function deleteChatMessage(chatId, messageId, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/${chatId}/messages/${messageId}/delete/`, {
+      method: "DELETE",
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to delete chat message" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Marks a message as read by a user.
+ * @async
+ * @function readChatMessage
+ * @param {number} chatId - The ID of the chat.
+ * @param {number} messageId - The ID of the message.
+ * @param {number} userId - The ID of the user marking the message as read.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Message read result or error.
+ */
+export async function readChatMessage(chatId, messageId, userId, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/${chatId}/messages/${messageId}/read/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to read chat message" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Reacts to a message in a chat.
+ * @async
+ * @function reactToChatMessage
+ * @param {number} chatId - The ID of the chat.
+ * @param {number} messageId - The ID of the message.
+ * @param {number} userId - The ID of the user reacting.
+ * @param {string} reaction - The reaction to add.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Reaction result or error.
+ */
+export async function reactToChatMessage(chatId, messageId, userId, reaction, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/${chatId}/messages/${messageId}/reactions/add/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId, reaction }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to react to chat message" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+
+/**
+ * Removes a reaction from a message in a chat.
+ * @async
+ * @function removeChatMessageReaction
+ * @param {number} chatId - The ID of the chat.
+ * @param {number} messageId - The ID of the message.
+ * @param {number} userId - The ID of the user removing the reaction.
+ * @param {number} reactionId - The ID of the reaction to remove.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Reaction removal result or error.
+ */
+export async function removeChatMessageReaction(chatId, messageId, userId, reactionId, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/chats/${chatId}/messages/${messageId}/reactions/${reactionId}/remove/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to remove chat message reaction" };
     return data;
   } catch (err) {
     return { error: "Network error or server unavailable" };

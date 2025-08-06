@@ -28,7 +28,7 @@ const tests = [
     // { fn: api.createUser, args: [{ username: "testuser2", password: "testpass2" }] },
     // { fn: api.deleteUser, args: [3] },
     { fn: api.userChangePassword, args: [USER_ID, "pass1"] }, // same password
-    { fn: api.updateUser, args: [USER_ID, "user1"] }, // same username
+    { fn: api.updateUser, args: [USER_ID, { username: "user1" }] }, // same username
     { fn: api.getUser, args: [USER_ID] },
     { fn: api.getUserOrganizationsAdmin, args: [USER_ID] },
     { fn: api.getUserOrganizationsMember, args: [USER_ID] },
@@ -78,9 +78,24 @@ const tests = [
     { fn: api.getUserPostComments, args: [1, 1, 0, 10] },
     { fn: api.getUserCommentReplies, args: [1, 1, 0, 10] },
     { fn: api.getUserFeed, args: [1, 0, 10] },
-    { fn: api.search, args: ["test", true, true, true, true] },
+    { fn: api.search, args: [USER_ID, "test", true, true, true, true] },
+    
+    // Messaging API Tests
+    { fn: api.getChats, args: [USER_ID] },
+    { fn: api.getChatMessages, args: [1, 0, 10] },
+    { fn: api.createChat, args: [[{ user_id: 1, is_org: false, role: "member" }, { user_id: 2, is_org: false, role: "member" }]] },
+    { fn: api.createGroupChat, args: [[{ user_id: 1, is_org: false, role: "member" }, { user_id: 2, is_org: false, role: "member" }], "Test Group", "http://example.com/group.jpg"] },
+    { fn: api.addGroupChatMember, args: [1, { user_id: 3, is_org: false, role: "member" }] },
+    { fn: api.removeGroupChatMember, args: [1, 3] },
+    { fn: api.createChatMessage, args: [1, USER_ID, "Test message"] },
+    //{ fn: api.deleteChatMessage, args: [1, 1] },
+    { fn: api.readChatMessage, args: [1, 1, USER_ID] },
+    { fn: api.reactToChatMessage, args: [1, 1, USER_ID, "👍"] },
+    { fn: api.reactToChatMessage, args: [1, 1, USER_ID, "❤️"] },
+    { fn: api.removeChatMessageReaction, args: [1, 1, USER_ID, 2] },
 ]
 
+let successCount = 0;
 let failedCount = 0;
 
 for (const test of tests) {
@@ -88,9 +103,11 @@ for (const test of tests) {
     console.log(`Test ${test.fn.name} ${result ? "passed" : "failed"}`);
     if (!result) {
         failedCount++;
-        //break;
+        break;
+    } else {
+        successCount++;
     }
 }
 
 console.log("\nUnit Test Summary:");
-console.log(`Tests passed: ${tests.length - failedCount}/${tests.length}`);
+console.log(`Tests passed: ${successCount}/${successCount + failedCount}`);

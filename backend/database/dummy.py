@@ -2,6 +2,8 @@
 Dummy database module for testing
 '''
 
+from datetime import datetime
+
 from .database import Database
 
 class DummyDatabase(Database):
@@ -11,6 +13,7 @@ class DummyDatabase(Database):
         ''' Initialize the Dummy database '''
         self._account_id = 1
         self._post_id = 1
+        self._chat_id = 1
 
         self.users: list[dict] = []
         self.organizations: list[dict] = []
@@ -27,12 +30,21 @@ class DummyDatabase(Database):
         self.going_events: list[dict] = []
         self.interested_events: list[dict] = []
 
+        # Messaging
+        self.chats: list[dict] = [] # [id, created_at]
+        self.group_chats: list[dict] = [] # [id, name, image_url, created_at]
+        self.chat_members: list[dict] = [] # [id, chat_id, user_id, joined_at, is_org, role]
+        self.messages: list[dict] = [] # [id, chat_id, sender_id, content, is_deleted, created_at]
+        self.message_read: list[dict] = [] # [id, message_id, user_id, read_at]
+        self.message_reactions: list[dict] = [] # [id, message_id, user_id, reaction, created_at]
+
         self.__create_dummy_data()
 
     def __create_dummy_data(self):
         ''' Create some dummy data for testing '''
         self._account_id = 3
         self._post_id = 3
+        self._chat_id = 3
         self.users = [
             {"id": 1, "username": "user1", "password": "pass1", "pfp_url": "https://cw39.com/wp-content/uploads/sites/10/2016/01/s036012017.jpg",
              "first_name": "Big", "last_name": "Monkey", "email": "bigmonkay@gmail.com", "bio": "I am a really big monkey"},
@@ -77,6 +89,25 @@ class DummyDatabase(Database):
         self.going_events = [
             {"event_id": 3, "user_id": 1},
             {"event_id": 4, "user_id": 2}
+        ]
+        self.chats = [
+            {"id": 1, "created_at": "2023-10-01T10:00:00Z"}
+        ]
+        self.group_chats = []
+        self.chat_members = [
+            {"id": 1, "chat_id": 1, "user_id": 1, "joined_at": "2023-10-01T10:00:00Z", "is_org": False, "role": "member"},
+            {"id": 2, "chat_id": 1, "user_id": 2, "joined_at": "2023-10-01T10:00:00Z", "is_org": False, "role": "member"}
+        ]
+        self.messages = [
+            {"id": 1, "chat_id": 1, "sender_id": 1, "content": "Hello, how are you?", "is_deleted": False, "created_at": "2023-10-01T10:00:00Z"},
+            {"id": 2, "chat_id": 1, "sender_id": 2, "content": "I'm good, thank you!", "is_deleted": False, "created_at": "2023-10-01T10:01:00Z"}
+        ]
+        self.message_read = [
+            {"id": 1, "message_id": 1, "user_id": 1, "read_at": "2023-10-01T10:00:00Z"},
+            {"id": 2, "message_id": 2, "user_id": 2, "read_at": "2023-10-01T10:01:00Z"}
+        ]
+        self.message_reactions = [
+            {"id": 1, "message_id": 1, "user_id": 1, "reaction": "like", "created_at": "2023-10-01T10:00:00Z"},
         ]
 
     # Tests
@@ -869,6 +900,190 @@ class DummyDatabase(Database):
             "success": True,
             "message": "User feed retrieved successfully",
             "data": feed
+        }
+    
+    # Messaging
+    def get_chats(self, user_id: int) -> dict:
+        chats = [chat for chat in self.chats if user_id in [member['user_id'] for member in self.chat_members if member['chat_id'] == chat['id']]]
+        group_chats = [chat for chat in self.group_chats if user_id in [member['user_id'] for member in self.chat_members if member['chat_id'] == chat['id']]]
+        
+        for chat in chats:
+            other_user_id = [member['user_id'] for member in self.chat_members if member['chat_id'] == chat['id'] and member['user_id'] != user_id][0]
+            other_user_name, other_user_pfp = self._get_user_name_pfp(other_user_id)
+            chat['other_name'] = other_user_name
+            chat['other_pfp'] = other_user_pfp
+            chat['unread_count'] = len([msg for msg in self.messages if msg['chat_id'] == chat['id'] and msg['sender_id'] != user_id and msg['id'] not in [mr['message_id'] for mr in self.message_read if mr['user_id'] == user_id]])
+            chat['type'] = 'dm'
+        for group_chat in group_chats:
+            group_chat['type'] = 'group'
+            group_chat['unread_count'] = len([msg for msg in self.messages if msg['chat_id'] == group_chat['id'] and msg['sender_id'] != user_id and msg['id'] not in [mr['message_id'] for mr in self.message_read if mr['user_id'] == user_id]])
+
+        return {
+            "success": True,
+            "message": "Chats retrieved successfully",
+            "data": chats + group_chats
+        }
+
+    def get_chat_messages(self, chat_id: int, offset: int = 0, limit: int = 10) -> dict:
+        messages = [msg for msg in self.messages if msg['chat_id'] == chat_id]
+        messages = messages[offset:offset + limit]
+        for message in messages:
+            message['author_name'], message['author_pfp'] = self._get_user_name_pfp(message['sender_id'])
+        return {
+            "success": True,
+            "message": "Messages retrieved successfully",
+            "data": messages
+        }
+
+    def create_chat(self, members: dict) -> dict:
+        self.chats.append({
+            "id": self._chat_id,
+            "created_at": datetime.now().isoformat()
+        })
+        for member in members:
+            self.chat_members.append({
+                "id": len(self.chat_members) + 1,
+                "chat_id": self._chat_id,
+                "user_id": member['user_id'],
+                "joined_at": datetime.now().isoformat(),
+                "is_org": member['is_org'],
+                "role": member['role']
+            })
+        data = {
+            "id": self._chat_id,
+            "created_at": datetime.now().isoformat(),
+            "type": "dm",
+            "unread_count": 0
+        }
+        data['other_name'], data['other_pfp'] = self._get_user_name_pfp(members[0]['user_id'])
+        self._chat_id += 1
+        return {
+            "success": True,
+            "message": "Chat created successfully",
+            "data": data
+        }
+
+    def create_group_chat(self, members: dict, name: str, image_url: str) -> dict:
+        self.group_chats.append({
+            "id": self._chat_id,
+            "name": name,
+            "image_url": image_url,
+            "created_at": datetime.now().isoformat()
+        })
+        for member in members:
+            self.chat_members.append({
+                "id": len(self.chat_members) + 1,
+                "chat_id": self._chat_id,
+                "user_id": member['user_id'],
+                "joined_at": datetime.now().isoformat(),
+                "is_org": member['is_org'],
+                "role": member['role']
+            })
+        data = {
+            "id": self._chat_id,
+            "created_at": datetime.now().isoformat(),
+            "type": "group",
+            "unread_count": 0,
+            "name": name,
+            "image_url": image_url
+        }
+        self._chat_id += 1
+        return {
+            "success": True,
+            "message": "Group chat created successfully",
+            "data": data
+        }
+
+    def add_group_chat_member(self, chat_id: int, member: dict) -> dict:
+        self.chat_members.append({
+            "id": len(self.chat_members) + 1,
+            "chat_id": chat_id,
+            "user_id": member['user_id'],
+            "joined_at": datetime.now().isoformat(),
+            "is_org": member['is_org'],
+            "role": member['role']
+        })
+        return {
+            "success": True,
+            "message": "Member added to group chat successfully"
+        }
+
+    def remove_group_chat_member(self, chat_id: int, member_id: int) -> dict:
+        for member in self.chat_members:
+            if member['chat_id'] == chat_id and member['user_id'] == member_id:
+                self.chat_members.remove(member)
+                return {
+                    "success": True,
+                    "message": "Member removed from group chat successfully"
+                }
+        return {
+            "success": False,
+            "message": "Member not found in group chat"
+        }
+
+    def create_chat_message(self, chat_id: int, sender_id: int, content: str) -> dict:
+        self.messages.append({
+            "id": len(self.messages) + 1,
+            "chat_id": chat_id,
+            "sender_id": sender_id,
+            "content": content,
+            "created_at": datetime.now().isoformat()
+        })
+        return {
+            "success": True,
+            "message": "Message created successfully"
+        }
+
+    def delete_chat_message(self, chat_id: int, message_id: int) -> dict:
+        for message in self.messages:
+            if message['chat_id'] == chat_id and message['id'] == message_id:
+                self.messages.remove(message)
+                return {
+                    "success": True,
+                    "message": "Message deleted successfully"
+                }
+        return {
+            "success": False,
+            "message": "Message not found in chat"
+        }
+
+    def read_chat_message(self, chat_id: int, message_id: int, user_id: int) -> dict:
+        self.message_read.append({
+            "chat_id": chat_id,
+            "message_id": message_id,
+            "user_id": user_id
+        })
+        return {
+            "success": True,
+            "message": "Message marked as read successfully"
+        }
+
+    def react_to_chat_message(self, chat_id: int, message_id: int, user_id: int, reaction: str) -> dict:
+        self.message_reactions.append({
+            "chat_id": chat_id,
+            "message_id": message_id,
+            "user_id": user_id,
+            "reaction": reaction
+        })
+        return {
+            "success": True,
+            "message": "Message reacted to successfully"
+        }
+
+    def remove_chat_message_reaction(self, chat_id: int, message_id: int, user_id: int, reaction_id: int) -> dict:
+        print("DATABSE removing reaction", chat_id, message_id, user_id, reaction_id)
+        for reaction in self.message_reactions:
+            if reaction['chat_id'] == chat_id and reaction['message_id'] == message_id and reaction['user_id'] == user_id and reaction['id'] == reaction_id:
+                print("FOUND")
+                self.message_reactions.remove(reaction)
+                print("SUCCESS")
+                return {
+                    "success": True,
+                    "message": "Message reaction removed successfully"
+                }
+        return {
+            "success": False,
+            "message": "Message reaction not found"
         }
 
     # Search
