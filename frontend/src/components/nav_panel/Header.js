@@ -44,6 +44,7 @@ function Header({ userId, user, setUserId }) {
                         </div>
                     </div>
                     <Link to="/messaging" className="hover:text-indigo-300 transition">Messaging</Link>
+                    <Link to="/organization" className="hover:text-indigo-300 transition">Organization</Link>
                 </nav>
 
                 {/* Auth Button */}

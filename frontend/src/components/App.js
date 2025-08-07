@@ -13,6 +13,8 @@ import CreatePost from "./create_page/CreatePost";
 import CreateEvent from "./create_page/CreateEvent";
 import MessagingPage from "./messaging_page/MessagingPage";
 import ProfilePage from "./profile_page/ProfilePage";
+import OrganizationProfilePage from "./profile_page/OrganizationProfilePage";
+import OrganizationPage from "./organization_page/OrganizationPage";
 import { getUser } from "../api/api";
 
 function App() {
@@ -49,6 +51,8 @@ function App() {
                         <Route path="/messaging" element={<MessagingPage userId={userId} />} />
                         <Route path="/profile" element={<ProfilePage userId={userId} />} />
                         <Route path="/profile/:profileUserId" element={<ProfilePage userId={userId} />} />
+                        <Route path="/organization" element={<OrganizationPage />} />
+                        <Route path="/organization/:orgId" element={<OrganizationProfilePage />} />
                     </Routes>
                 </div>
 

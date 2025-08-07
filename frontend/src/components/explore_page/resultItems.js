@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import UserLink from "../UserLink";
 
 const User = ({ user }) => {
@@ -34,7 +35,10 @@ const Organization = ({ organization }) => {
   if (!organization) return null;
 
   return (
-    <div className="flex items-center gap-4 hover:bg-gray-100 rounded-lg p-2 transition">
+    <Link
+      to={`/organization/${organization.id}`}
+      className="flex items-center gap-4 hover:bg-gray-100 rounded-lg p-2 transition"
+    >
       {/* Organization Icon */}
       <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold text-white flex-shrink-0">
         🏢
@@ -48,7 +52,7 @@ const Organization = ({ organization }) => {
           {organization.location || ""}
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

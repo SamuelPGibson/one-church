@@ -52,8 +52,12 @@ class DummyDatabase(Database):
              "first_name": "Big", "last_name": "Cow", "email": "bigcow@gmail.com", "bio": "I am a really big cow"}
         ]
         self.organizations = [
-            {"id": 1, "name": "Org1", "location": "Saskatoon", "parent_id": 0},
-            {"id": 2, "name": "Org2", "location": "Regina", "parent_id": 0}
+            {"id": 1, "name": "Elim Church", "location": "Saskatoon", "parent_id": 0,
+             "description": "A community on the journey to be more like Jesus",
+             "pfp_url": "https://yt3.googleusercontent.com/ytc/AIdro_ls9NCK23u2uy68FhyAdlnBWS4fIB1NnjqN_Q4AIFyv0Hw=s160-c-k-c0x00ffffff-no-rj"},
+            {"id": 2, "name": "Org2", "location": "Regina", "parent_id": 0,
+             "description": "Org2 description",
+             "pfp_url": "https://thumbs.dreamstime.com/b/church-building-theme-image-eps-vector-illustration-church-building-theme-image-127196327.jpg"},
         ]
         self.posts = [
             {"id": 1, "author_id": 1,
