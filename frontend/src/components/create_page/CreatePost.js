@@ -1,6 +1,52 @@
 
-const CreatePost = ({ userId }) => {
+import React, {useState} from 'react';
 
+const CreatePost = ({ userId }) => {
+  const [file, setFile] = useState(null);
+  const [uploadedURL, setUploadedURL] = useState('');
+
+  // STEP 1: When the user selects a file
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  // STEP 2: Upload the file to S3 via presigned URL
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (!file) return;
+
+    try {
+      // Step 2.1: Ask Django backend for a presigned URL
+      const params = new URLSearchParams({
+        filename: file.name,
+        filetype: file.type,
+      });
+
+      const response = await fetch(`http://127.0.0.1:8000/api/presigned-url/?${params}`);
+      if (!response.ok) {
+        throw new Error('Failed to get presigned URL');
+      }
+
+      const { uploadURL, key } = await response.json();
+
+      // Step 2.2: Upload the file to S3 directly
+      const uploadResponse = await fetch(uploadURL, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file.type,
+        },
+        body: file,
+      });
+
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();   // << important!
+        console.error("S3 error:", errorText);
+      }
+
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  };
 
 
     return (
@@ -20,9 +66,10 @@ const CreatePost = ({ userId }) => {
                     </label>
                     <input
                         type="file"
+                        onChange={handleFileChange}
                         id="image"
                         name="image"
-                        accept="image/*"
+                        accept="image/jpeg"
                         className="block w-full text-gray-700"
                     />
                 </div>
@@ -65,6 +112,7 @@ const CreatePost = ({ userId }) => {
                     </button>
                     <button
                         type="submit"
+                        onClick={handleUpload}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                     >
                         Post

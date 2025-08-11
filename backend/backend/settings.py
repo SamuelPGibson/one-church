@@ -153,3 +153,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# INFO for Image Upload to S3 Bucket Connection
+AWS_ACCESS_KEY_ID ="AKIA3N4YEKRY5XP7HTVP"
+AWS_SECRET_ACCESS_KEY = "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"
+AWS_STORAGE_BUCKET_NAME = "assembly-jesus-media"
+AWS_REGION = "us-east-1"
+

@@ -15,6 +15,10 @@ import json
 
 from database import Database, DummyDatabase, PostgreSQLDatabase
 
+# for presigned urls
+import boto3
+
+
 # db: Database = PostgreSQLDatabase()
 db: Database = DummyDatabase()  # Use DummyDatabase for testing
 
@@ -673,6 +677,55 @@ def search_events(request: HttpRequest) -> JsonResponse:
         return JsonResponse(result, status=get_status_code(result))
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
+# creation of presigned urls
+def generate_presigned_url(request):
+    filename = request.GET.get("filename")
+    filetype = request.GET.get("filetype")
+    if not filename or not filetype:
+        return JsonResponse({"error": "Missing filename or filetype"}, status=400)
+
+    s3_client = boto3.client(
+        "s3",
+        region_name="us-east-1",
+        aws_access_key_id="AKIA3N4YEKRY5XP7HTVP",
+        aws_secret_access_key="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",
+    )
+
+    key = f"uploads/{filename}"
+
+    try:
+        url = s3_client.generate_presigned_url(
+            "put_object",
+            Params={
+                "Bucket": "assembly-jesus-media",
+                "Key": key,
+                "ContentType": "image/jpeg",
+            },
+            ExpiresIn=3000,  # 3000 seconds
+        )
+
+        return JsonResponse({"uploadURL": url, "key": key})
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
+def test_boto3_connection(request):
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id="AKIA3N4YEKRY5XP7HTVP",
+        aws_secret_access_key="3xY0Z34TyPQbS/5S8GN2dc+buZVztkPNA590hQwT",
+        region_name="us-east-1"
+    )
+
+    try:
+        # Attempt to list buckets (or list objects in your bucket)
+        response = s3.list_buckets()
+        print("Buckets:", response['Buckets'])  # Log to console
+        return JsonResponse({'status': 'success', 'buckets': response['Buckets']})
+    except Exception as e:
+        print("Boto3 Error:", str(e))
+        return JsonResponse({'status': 'error', 'message': str(e)})
+    
 # Make all endpoints csrf_exempt
 get_test = csrf_exempt(get_test)
 get_int_test = csrf_exempt(get_int_test)
@@ -745,3 +798,4 @@ remove_chat_message_reaction = csrf_exempt(remove_chat_message_reaction)
 search = csrf_exempt(search)
 search_organizations = csrf_exempt(search_organizations)
 search_events = csrf_exempt(search_events)
+generate_presigned_url = csrf_exempt(generate_presigned_url)
