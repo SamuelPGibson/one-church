@@ -18,6 +18,11 @@ from database import Database, DummyDatabase, PostgreSQLDatabase
 # for presigned urls
 import boto3
 
+# env 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # db: Database = PostgreSQLDatabase()
 db: Database = DummyDatabase()  # Use DummyDatabase for testing
@@ -686,9 +691,9 @@ def generate_presigned_url(request):
 
     s3_client = boto3.client(
         "s3",
-        region_name="us-east-1",
-        aws_access_key_id="AKIA3N4YEKRY5XP7HTVP",
-        aws_secret_access_key="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",
+        region_name=os.environ.get('region_name'),
+        aws_access_key_id= os.environ.get('aws_access_key_id'),
+        aws_secret_access_key= os.environ.get('aws_secret_access_key'),
     )
 
     key = f"uploads/{filename}"
@@ -697,7 +702,7 @@ def generate_presigned_url(request):
         url = s3_client.generate_presigned_url(
             "put_object",
             Params={
-                "Bucket": "assembly-jesus-media",
+                "Bucket": os.environ.get('aws_bucket'),
                 "Key": key,
                 "ContentType": "image/jpeg",
             },
@@ -712,9 +717,9 @@ def generate_presigned_url(request):
 def test_boto3_connection(request):
     s3 = boto3.client(
         's3',
-        aws_access_key_id="AKIA3N4YEKRY5XP7HTVP",
-        aws_secret_access_key="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",
-        region_name="us-east-1"
+        aws_access_key_id=os.environ.get('aws__access_key_id'),
+        aws_secret_access_key=os.environ.get('aws_secret_access_key'),
+        region_name= os.environ.get('region_name')
     )
 
     try:
