@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  backend:
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    environment:
+      - DEBUG=1
+      - WATCHMAN_ENABLED=1
+
+  frontend:
+    command: npm start
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHMAN_ENABLED=1
