@@ -1125,3 +1125,35 @@ export async function removeChatMessageReaction(chatId, messageId, userId, react
     return { error: "Network error or server unavailable" };
   }
 }
+
+/**
+ * Submits user feedback to the backend.
+ * @async
+ * @function createUserFeedback
+ * @param {string} firstName - The user's first name.
+ * @param {string} lastName - The user's last name.
+ * @param {string} email - The user's email address.
+ * @param {string} feedback - The feedback message.
+ * @param {string} baseUrl - The base URL for the API.
+ * @returns {Promise<Object>} Feedback submission result or error.
+ */
+export async function createUserFeedback(firstName, lastName, email, feedback, baseUrl = "") {
+  try {
+    const res = await fetch(`${baseUrl}/api/feedback/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        feedback: feedback,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { error: data.error || "Failed to submit feedback" };
+    return data;
+  } catch (err) {
+    return { error: "Network error or server unavailable" };
+  }
+}
+

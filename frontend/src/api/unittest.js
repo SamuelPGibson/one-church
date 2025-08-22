@@ -93,6 +93,9 @@ const tests = [
     { fn: api.reactToChatMessage, args: [1, 1, USER_ID, "👍"] },
     { fn: api.reactToChatMessage, args: [1, 1, USER_ID, "❤️"] },
     { fn: api.removeChatMessageReaction, args: [1, 1, USER_ID, 2] },
+
+    // Feedback
+    { fn: api.createUserFeedback, args: ["John", "Doe", "john.doe@example.com", "This is a test feedback"] },
 ]
 
 let successCount = 0;
@@ -103,7 +106,7 @@ for (const test of tests) {
     console.log(`Test ${test.fn.name} ${result ? "passed" : "failed"}`);
     if (!result) {
         failedCount++;
-        break;
+        //break;
     } else {
         successCount++;
     }

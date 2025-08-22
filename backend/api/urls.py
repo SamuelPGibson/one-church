@@ -106,6 +106,9 @@ urlpatterns = [
     path('search/', views.search),
     path('search/organizations/', views.search_organizations),
     path('search/events/', views.search_events),
+
+    # Feedback
+    path('feedback/', views.create_user_feedback),
     
     # presigned image url
     path('presigned-url/', views.generate_presigned_url),

@@ -1281,3 +1281,22 @@ class Database(ABC):
                             'message' contains additional information about the result.
                             'data' contains the search results if successful.
         '''
+
+    @abstractmethod
+    def create_user_feedback(self, first_name: str, last_name: str, email: str, feedback: str) -> dict:
+        '''
+        Purpose:
+            Create a new user feedback.
+        Pre-conditions:
+            :param first_name: The first name of the user
+            :param last_name: The last name of the user
+            :param email: The email of the user
+            :param feedback: The feedback of the user
+        Post-conditions:
+            (none)
+        Returns:
+            :return: dict: A dictionary containing the result of the user feedback creation operation
+                            with keys 'success' and 'message'.
+                            'success' is True if the user feedback creation is successful, otherwise False.
+                            'message' contains additional information about the result.
+        '''

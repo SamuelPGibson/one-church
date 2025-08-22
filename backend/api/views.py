@@ -682,6 +682,17 @@ def search_events(request: HttpRequest) -> JsonResponse:
         return JsonResponse(result, status=get_status_code(result))
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
+# Feedback
+def create_user_feedback(request: HttpRequest) -> JsonResponse:
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            result = db.create_user_feedback(data["first_name"], data["last_name"], data["email"], data["feedback"])
+            return JsonResponse(result, status=get_status_code(result))
+        except (KeyError, json.JSONDecodeError):
+            return JsonResponse({"error": "Invalid input"}, status=400)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
 # creation of presigned urls
 def generate_presigned_url(request):
     filename = request.GET.get("filename")
@@ -803,4 +814,5 @@ remove_chat_message_reaction = csrf_exempt(remove_chat_message_reaction)
 search = csrf_exempt(search)
 search_organizations = csrf_exempt(search_organizations)
 search_events = csrf_exempt(search_events)
+create_user_feedback = csrf_exempt(create_user_feedback)
 generate_presigned_url = csrf_exempt(generate_presigned_url)

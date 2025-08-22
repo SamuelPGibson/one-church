@@ -269,3 +269,5 @@ class PostgreSQLDatabase(Database):
     def search_events(self, query: str) -> dict:
         pass
 
+    def create_user_feedback(self, first_name: str, last_name: str, email: str, feedback: str) -> dict:
+        pass

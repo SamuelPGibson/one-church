@@ -38,6 +38,9 @@ class DummyDatabase(Database):
         self.message_read: list[dict] = [] # [id, message_id, user_id, read_at]
         self.message_reactions: list[dict] = [] # [id, message_id, user_id, reaction, created_at]
 
+        # Feedback
+        self.feedback: list[dict] = [] # [first_name, last_name, email, feedback, created_at]
+
         self.__create_dummy_data()
 
     def __create_dummy_data(self):
@@ -1138,4 +1141,17 @@ class DummyDatabase(Database):
             "success": True,
             "message": "Events search completed",
             "data": results
+        }
+
+    def create_user_feedback(self, first_name: str, last_name: str, email: str, feedback: str) -> dict:
+        self.feedback.append({
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "feedback": feedback,
+            "created_at": datetime.now().isoformat()
+        })
+        return {
+            "success": True,
+            "message": "User feedback created successfully"
         }

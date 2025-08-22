@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './InfoPage.css';
+import { createUserFeedback } from '../api/api';
+import { API_BASE_URL } from '../config';
 
 const InfoPage = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     feedback: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [scrollY, setScrollY] = useState(0);
 
   // Refs for scroll animations
@@ -37,16 +41,39 @@ const InfoPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(''); // Clear any previous errors
     
-    // Simulate form submission delay
-    setTimeout(() => {
+    try {
+      const result = await createUserFeedback(
+        formData.firstName,
+        formData.lastName,
+        formData.email,
+        formData.feedback,
+        API_BASE_URL
+      );
+      
+      if (result.error) {
+        // Handle API error
+        console.error('Feedback submission failed:', result.error);
+        setSubmitError(result.error);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Success - reset form and show success message
       setIsSubmitting(false);
       setSubmitSuccess(true);
-      setFormData({ name: '', email: '', feedback: '' });
+      setSubmitError(''); // Clear any error messages
+      setFormData({ firstName: '', lastName: '', email: '', feedback: '' });
       
       // Reset success message after 5 seconds
       setTimeout(() => setSubmitSuccess(false), 5000);
-    }, 1500);
+      
+    } catch (error) {
+      console.error('Network error:', error);
+      setSubmitError('Network error. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
   const founders = [
@@ -277,41 +304,57 @@ const InfoPage = () => {
                 <span className="text-3xl text-green-400">✓</span>
               </div>
                              <h3 className="text-2xl font-semibold text-slate-900 mb-2">Thank You!</h3>
-               <p className="text-slate-600">Your feedback has been submitted. We'll be in touch soon!</p>
+               <p className="text-slate-600">Your feedback has been submitted. We use your feedback to inform the development process and improve the platform. Thank you for your input!</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                                     <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
-                     Name *
-                   </label>
-                                     <input
-                     type="text"
-                     id="name"
-                     name="name"
-                     value={formData.name}
-                     onChange={handleInputChange}
-                     required
-                     className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-slate-900 placeholder-slate-400"
-                     placeholder="Your name"
-                   />
+                  <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 mb-2">
+                    First Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-slate-900 placeholder-slate-400"
+                    placeholder="Your first name"
+                  />
                 </div>
                 <div>
-                                     <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                     Email *
-                   </label>
-                                     <input
-                     type="email"
-                     id="email"
-                     name="email"
-                     value={formData.email}
-                     onChange={handleInputChange}
-                     required
-                     className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-slate-900 placeholder-slate-400"
-                     placeholder="your.email@example.com"
-                   />
+                  <label htmlFor="lastName" className="block text-sm font-medium text-slate-700 mb-2">
+                    Last Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-slate-900 placeholder-slate-400"
+                    placeholder="Your last name"
+                  />
                 </div>
+              </div>
+              
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-slate-900 placeholder-slate-400"
+                  placeholder="your.email@example.com"
+                />
               </div>
               
               <div>
@@ -328,6 +371,14 @@ const InfoPage = () => {
                    placeholder="Share your thoughts, questions, or how you'd like to use Assembly..."
                  />
               </div>
+              
+              {submitError && (
+                <div className="text-center">
+                  <div className="inline-flex items-center px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    <span className="text-sm font-medium">⚠️ {submitError}</span>
+                  </div>
+                </div>
+              )}
               
               <div className="text-center">
                                  <button
